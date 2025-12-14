@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
     <title>Import House | Winter Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +15,14 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: { brand: '#000000' }
+                    colors: { brand: '#000000' },
+                    // Custom height for mobile browsers
+                    height: {
+                        'screen-dvh': '100dvh',
+                    },
+                    minHeight: {
+                        'screen-dvh': '100dvh',
+                    }
                 }
             }
         }
@@ -23,127 +31,60 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap');
         
-        body { font-family: 'Inter', sans-serif; overflow-x: hidden; background: #fff; }
+        /* Prevent horizontal scroll on mobile */
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; background: #fff; -webkit-tap-highlight-color: transparent; }
         body.app-active { overflow-y: auto; }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        /* Hide Scrollbar */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
 
         .section-hidden { display: none !important; }
         .section-active { display: block !important; }
 
-        /* --- NAV HOVER ANIMATION --- */
-        .nav-item {
-            position: relative;
-            cursor: pointer;
-        }
+        /* --- NAV ANIMATION --- */
+        .nav-item { position: relative; cursor: pointer; }
         .nav-item::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 0;
-            background-color: black;
-            transition: width 0.3s ease-out;
+            content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0;
+            background-color: black; transition: width 0.3s ease-out;
         }
-        .nav-item:hover::after {
-            width: 100%;
-        }
+        .nav-item:hover::after { width: 100%; }
 
-        /* --- SNOWFALL ANIMATION --- */
+        /* --- SNOWFALL --- */
         #snow-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 30;
-            display: none; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 30; display: none; 
         }
-
         .snowflake {
-            position: absolute;
-            top: -10px;
-            background: #cbd5e1;
-            border-radius: 50%;
-            opacity: 0.9;
-            animation: fall linear infinite;
+            position: absolute; top: -10px; background: #cbd5e1;
+            border-radius: 50%; opacity: 0.9; animation: fall linear infinite;
         }
-
         @keyframes fall {
             0% { transform: translateY(-10px) translateX(0px); opacity: 0.9; }
             100% { transform: translateY(100vh) translateX(20px); opacity: 0; }
         }
 
-        /* --- INFINITE SCROLL MARQUEE --- */
+        /* --- MARQUEE --- */
         .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-            width: 100%;
-            padding-bottom: 1rem;
+            overflow: hidden; white-space: nowrap; width: 100%; padding-bottom: 1rem;
             mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
         }
-
-        .marquee-track {
-            display: inline-flex;
-            gap: 2rem;
-            animation: scroll 20s linear infinite;
-        }
-
-        .marquee-track:hover {
-            animation-play-state: paused;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        .marquee-item {
-            width: 150px;
-            height: 200px;
-            border-radius: 1rem;
-            overflow: hidden;
-            background: #f3f4f6;
-            flex-shrink: 0;
-            position: relative;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
+        .marquee-track { display: inline-flex; gap: 1.5rem; animation: scroll 20s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         
-        .marquee-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .marquee-item {
+            width: 140px; height: 200px; border-radius: 1rem;
+            overflow: hidden; background: #f3f4f6; flex-shrink: 0; position: relative;
         }
+        .marquee-item img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- BACKGROUND SLIDER (GLOBAL) --- */
+        /* --- SLIDER --- */
         .slider-wrapper {
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
-            z-index: 0; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1); z-index: 0; 
         }
-        .slide {
-            min-width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        .slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .slide::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.4); 
-        }
+        .slide { min-width: 100%; height: 100%; position: relative; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .slide::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
     </style>
 </head>
 <body class="text-slate-900">
@@ -156,21 +97,21 @@
         <div class="slide"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80" alt="Winter 3"></div>
     </div>
 
-    <div id="slider-controls" class="fixed inset-0 z-40 pointer-events-none flex items-center justify-between px-4">
-        <button onclick="prevSlide()" class="pointer-events-auto w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition cursor-pointer">
-            <i class="ph ph-caret-left text-2xl"></i>
+    <div id="slider-controls" class="fixed inset-0 z-40 pointer-events-none flex items-center justify-between px-2 md:px-4">
+        <button onclick="prevSlide()" class="pointer-events-auto w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition">
+            <i class="ph ph-caret-left text-xl md:text-2xl"></i>
         </button>
-        <button onclick="nextSlide()" class="pointer-events-auto w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition cursor-pointer">
-            <i class="ph ph-caret-right text-2xl"></i>
+        <button onclick="nextSlide()" class="pointer-events-auto w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition">
+            <i class="ph ph-caret-right text-xl md:text-2xl"></i>
         </button>
     </div>
 
     <div id="intro-overlay" class="fixed inset-0 z-[200] flex pointer-events-none">
         <div id="door-left" class="w-1/2 h-full bg-black flex items-center justify-end border-r border-gray-800 relative z-20">
-            <span class="text-white text-4xl md:text-6xl font-black tracking-tighter mr-4">IMPORT</span>
+            <span class="text-white text-3xl md:text-6xl font-black tracking-tighter mr-2 md:mr-4">IMPORT</span>
         </div>
         <div id="door-right" class="w-1/2 h-full bg-black flex items-center justify-start relative z-20">
-            <span class="text-white text-4xl md:text-6xl font-black tracking-tighter ml-4">HOUSE</span>
+            <span class="text-white text-3xl md:text-6xl font-black tracking-tighter ml-2 md:ml-4">HOUSE</span>
         </div>
     </div>
 
@@ -186,7 +127,7 @@
         </div>
 
         <div class="w-full lg:w-1/2 h-full relative">
-            <div id="login-form" class="absolute inset-0 flex items-center justify-center p-8 bg-white transition-opacity duration-500">
+            <div id="login-form" class="absolute inset-0 flex items-center justify-center p-6 bg-white transition-opacity duration-500">
                 <div class="max-w-md w-full login-content-anim opacity-0 translate-y-4">
                     <div class="mb-10 text-center">
                         <h1 class="text-4xl font-black tracking-tight mb-2">Welcome Back.</h1>
@@ -211,7 +152,7 @@
                 </div>
             </div>
 
-            <div id="signup-form" class="absolute inset-0 flex items-center justify-center p-8 bg-white opacity-0 pointer-events-none transition-opacity duration-500">
+            <div id="signup-form" class="absolute inset-0 flex items-center justify-center p-6 bg-white opacity-0 pointer-events-none transition-opacity duration-500">
                 <div class="max-w-md w-full">
                     <h1 class="text-4xl font-black tracking-tight mb-2">Apply for Access.</h1>
                     <form onsubmit="handleSignup(event)" class="space-y-4 mt-8">
@@ -236,16 +177,18 @@
     <div id="main-app" class="hidden">
         
         <nav id="navbar" class="fixed top-0 w-full z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
-            <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex justify-between items-center">
                 <div onclick="switchView('home')" class="cursor-pointer flex items-center gap-2 group">
-                    <img src="theimporthouse.webp" class="h-10 w-auto object-contain transition-transform group-hover:scale-105" alt="Import House">
+                    <img src="theimporthouse.webp" class="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" alt="Import House">
                 </div>
                 <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-500">
                     <button onclick="switchView('home')" class="nav-item hover:text-black transition">Home</button>
                     <button onclick="switchView('shop')" class="nav-item hover:text-black transition">Shop</button>
                     <button onclick="switchView('wishlist')" class="nav-item hover:text-black transition">Wishlist</button>
                 </div>
-                <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-4 md:space-x-6">
+                    <button onclick="switchView('shop')" class="md:hidden text-gray-600 hover:text-blue-600"><i class="ph ph-storefront text-xl"></i></button>
+                    
                     <i onclick="switchView('profile')" class="ph ph-user text-xl cursor-pointer hover:text-blue-600 transition"></i>
                     <div class="relative cursor-pointer group" onclick="switchView('cart')">
                         <i class="ph ph-shopping-bag text-xl hover:text-blue-600 transition"></i>
@@ -255,60 +198,60 @@
             </div>
         </nav>
 
-        <section id="home-view" class="section-active min-h-screen relative flex flex-col pt-40 pb-20 z-20">
+        <section id="home-view" class="section-active min-h-screen-dvh relative flex flex-col pt-32 md:pt-40 pb-20 z-20">
             
-            <div class="flex-1 flex flex-col justify-center items-center text-center px-6">
-                <div class="hero-anim inline-block mb-4 px-4 py-1.5 rounded-full border border-white/30 bg-black/30 backdrop-blur-md text-xs font-bold uppercase tracking-widest text-white opacity-0 translate-y-4">
+            <div class="flex-1 flex flex-col justify-center items-center text-center px-4 md:px-6">
+                <div class="hero-anim inline-block mb-3 md:mb-4 px-3 md:px-4 py-1.5 rounded-full border border-white/30 bg-black/30 backdrop-blur-md text-[10px] md:text-xs font-bold uppercase tracking-widest text-white opacity-0 translate-y-4">
                     Winter Collection 2025
                 </div>
-                <h1 class="hero-anim text-5xl md:text-8xl font-black tracking-tighter mb-6 leading-[0.9] opacity-0 translate-y-4 text-white drop-shadow-2xl">
+                <h1 class="hero-anim text-5xl md:text-8xl font-black tracking-tighter mb-4 md:mb-6 leading-[0.9] opacity-0 translate-y-4 text-white drop-shadow-2xl">
                     DESIGN YOUR <br/> AESTHETIC.
                 </h1>
-                <button onclick="switchView('shop')" class="hero-anim bg-white text-black px-10 py-4 rounded-full font-bold text-lg flex items-center gap-2 mx-auto hover:bg-gray-200 transition shadow-xl opacity-0 translate-y-4 hover:scale-105 active:scale-95 duration-300 mt-6">
+                <button onclick="switchView('shop')" class="hero-anim bg-white text-black px-8 md:px-10 py-3 md:py-4 rounded-full font-bold text-base md:text-lg flex items-center gap-2 mx-auto hover:bg-gray-200 transition shadow-xl opacity-0 translate-y-4 hover:scale-105 active:scale-95 duration-300 mt-4 md:mt-6">
                     Start Shopping <i class="ph ph-arrow-right"></i>
                 </button>
             </div>
 
-            <div class="w-full mt-10">
+            <div class="w-full mt-6 md:mt-10">
                 <div class="marquee-container opacity-0 hero-anim translate-y-4">
                     <div class="marquee-track" id="marquee-track"></div>
                 </div>
             </div>
         </section>
 
-        <section id="shop-view" class="section-hidden min-h-screen pt-32 pb-20 px-6 max-w-7xl mx-auto bg-white relative z-40">
+        <section id="shop-view" class="section-hidden min-h-screen pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto bg-white relative z-40">
             <div class="flex flex-col md:flex-row justify-between items-end mb-8">
                 <div>
-                    <h2 class="text-4xl font-black mb-2">The Collection</h2>
+                    <h2 class="text-3xl md:text-4xl font-black mb-2">The Collection</h2>
                     <p class="text-gray-500">Exclusive drops and new arrivals.</p>
                 </div>
-                <div class="flex gap-2 overflow-x-auto mt-6 md:mt-0 pb-2 md:pb-0" id="brand-filters"></div>
+                <div class="flex gap-2 overflow-x-auto mt-6 md:mt-0 pb-2 md:pb-0 w-full md:w-auto" id="brand-filters"></div>
             </div>
 
-            <div class="mb-10 relative max-w-md">
+            <div class="mb-8 md:mb-10 relative max-w-md">
                 <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Search products (e.g. Hoodie, Denim)..." class="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:border-black outline-none transition bg-gray-50 focus:bg-white text-sm font-medium">
+                <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Search..." class="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:border-black outline-none transition bg-gray-50 focus:bg-white text-sm font-medium">
             </div>
 
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10"></div>
         </section>
 
-        <section id="wishlist-view" class="section-hidden min-h-screen pt-32 pb-20 px-6 max-w-7xl mx-auto bg-white relative z-40">
-            <div class="flex justify-between items-end mb-12">
+        <section id="wishlist-view" class="section-hidden min-h-screen pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto bg-white relative z-40">
+            <div class="flex justify-between items-end mb-8 md:mb-12">
                 <div>
-                    <h2 class="text-4xl font-black mb-2">My Wishlist</h2>
+                    <h2 class="text-3xl md:text-4xl font-black mb-2">My Wishlist</h2>
                     <p class="text-gray-500">Your curated favorite items.</p>
                 </div>
             </div>
-            <div id="wishlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+            <div id="wishlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10"></div>
         </section>
 
-        <section id="cart-view" class="section-hidden min-h-screen pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
+        <section id="cart-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
             <button onclick="switchView('shop')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition">
                 <i class="ph ph-arrow-left text-lg"></i> Back to Shop
             </button>
-            <h2 class="text-4xl font-black mb-8">Your Bag</h2>
-            <div class="flex flex-col lg:flex-row gap-12">
+            <h2 class="text-3xl md:text-4xl font-black mb-8">Your Bag</h2>
+            <div class="flex flex-col lg:flex-row gap-8 md:gap-12">
                 <div class="flex-1" id="cart-items-container">
                     <p class="text-gray-500 text-center py-10">Your cart is empty.</p>
                 </div>
@@ -322,28 +265,28 @@
             </div>
         </section>
 
-        <section id="profile-view" class="section-hidden min-h-screen pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
+        <section id="profile-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
             <button onclick="switchView('home')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition">
                 <i class="ph ph-arrow-left text-lg"></i> Back to Home
             </button>
             <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden opacity-0 translate-y-4">
-                <div class="h-48 w-full relative overflow-hidden bg-gray-900">
+                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900">
                     <img src="banner.jpg?auto=format&fit=crop&w=1600&q=80" 
                          class="w-full h-full object-cover opacity-80" alt="Banner">
                 </div>
-                <div class="px-8 pb-8 relative">
-                    <div class="absolute -top-12 left-8 w-24 h-24 rounded-2xl bg-white p-1 shadow-lg">
-                        <div class="w-full h-full bg-black text-white rounded-xl flex items-center justify-center text-4xl font-black">
+                <div class="px-6 md:px-8 pb-8 relative">
+                    <div class="absolute -top-10 md:-top-12 left-6 md:left-8 w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white p-1 shadow-lg">
+                        <div class="w-full h-full bg-black text-white rounded-xl flex items-center justify-center text-3xl md:text-4xl font-black">
                             <span id="user-initial">G</span>
                         </div>
-                        <div class="absolute -bottom-2 -right-2 bg-green-500 w-6 h-6 border-4 border-white rounded-full"></div>
+                        <div class="absolute -bottom-2 -right-2 bg-green-500 w-5 h-5 md:w-6 md:h-6 border-4 border-white rounded-full"></div>
                     </div>
-                    <div class="pt-16 flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div class="pt-14 md:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center">
                         <div>
-                            <h2 id="display-name" class="text-3xl font-black text-gray-900">Guest User</h2>
-                            <p class="text-gray-500 font-medium">Gold Member • Joined 2025</p>
+                            <h2 id="display-name" class="text-2xl md:text-3xl font-black text-gray-900">Guest User</h2>
+                            <p class="text-gray-500 font-medium text-sm md:text-base">Gold Member • Joined 2025</p>
                         </div>
-                        <button onclick="logout()" class="mt-4 md:mt-0 px-6 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition flex items-center gap-2">
+                        <button onclick="logout()" class="mt-4 md:mt-0 px-6 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition flex items-center gap-2 text-sm md:text-base">
                             <i class="ph ph-sign-out"></i> Sign Out
                         </button>
                     </div>
@@ -361,13 +304,13 @@
             </div>
         </section>
 
-        <footer id="footer" class="bg-black text-white py-16 border-t border-gray-900 relative z-50">
-            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+        <footer id="footer" class="bg-black text-white py-12 md:py-16 border-t border-gray-900 relative z-50">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex items-center gap-2 mb-4">
-                        <img src="theimporthouse.webp" class="h-12 w-auto object-contain" alt="Import House">
+                        <img src="theimporthouse.webp" class="h-10 md:h-12 w-auto object-contain" alt="Import House">
                     </div>
-                    <p class="text-gray-400 max-w-xs mb-6">
+                    <p class="text-gray-400 max-w-xs mb-6 text-sm md:text-base">
                         The world's leading destination for premium streetwear and luxury fashion. Curated for the modern aesthetic.
                     </p>
                     <div class="flex gap-4">
@@ -376,29 +319,30 @@
                         <a href="#" class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center hover:bg-white hover:text-black transition"><i class="ph ph-tiktok-logo text-lg"></i></a>
                     </div>
                 </div>
-                <div>
-                    <h3 class="font-bold mb-4">Discover</h3>
-                    <ul class="space-y-3 text-gray-400 text-sm">
-                        <li><a href="#" onclick="switchView('shop')" class="hover:text-white transition">New Arrivals</a></li>
-                        <li><a href="#" onclick="switchView('shop')" class="hover:text-white transition">Brands</a></li>
-                        <li><a href="#" class="hover:text-white transition">Editor's Choice</a></li>
-                        <li><a href="#" class="hover:text-white transition">Gift Cards</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold mb-4">Stay in the loop</h3>
-                    <p class="text-gray-400 text-sm mb-4">Subscribe for exclusive drops.</p>
-                    <div class="flex">
-                        <input type="email" placeholder="Email address" class="bg-gray-900 text-white px-4 py-3 rounded-l-lg w-full outline-none focus:ring-1 focus:ring-gray-700 text-sm">
-                        <button class="bg-white text-black px-4 py-3 rounded-r-lg font-bold hover:bg-gray-200 transition"><i class="ph ph-arrow-right"></i></button>
+                <div class="grid grid-cols-2 gap-8 md:flex md:gap-12 md:col-span-2">
+                    <div>
+                        <h3 class="font-bold mb-4">Discover</h3>
+                        <ul class="space-y-3 text-gray-400 text-sm">
+                            <li><a href="#" onclick="switchView('shop')" class="hover:text-white transition">New Arrivals</a></li>
+                            <li><a href="#" onclick="switchView('shop')" class="hover:text-white transition">Brands</a></li>
+                            <li><a href="#" class="hover:text-white transition">Editor's Choice</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold mb-4">Support</h3>
+                        <ul class="space-y-3 text-gray-400 text-sm">
+                            <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+                            <li><a href="#" class="hover:text-white transition">Returns</a></li>
+                            <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-gray-900 text-gray-500 text-xs flex justify-between">
+            <div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-gray-900 text-gray-500 text-xs flex flex-col md:flex-row justify-between gap-4">
                 <p>&copy; 2025 Import House Inc.</p>
                 <div class="flex gap-4">
                     <a href="#" class="hover:text-white">Privacy Policy</a>
-                    <a href="#" class="hover:text-white">Terms of Service</a>
+                    <a href="#" class="hover:text-white">Terms</a>
                 </div>
             </div>
         </footer>
@@ -413,7 +357,7 @@
         let currentSlide = 0;
         let currentBrand = 'All';
         
-        // --- CORRECTED IMAGES MATCHING NAMES ---
+        // --- PRODUCTS ---
         const products = [
             { id: 1, name: 'Tech Fleece Hoodie', brand: 'Nike', price: 4999, img: 'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?auto=format&fit=crop&w=800&q=80' }, // Hoodie
             { id: 2, name: 'Oversized Tee', brand: 'Adidas', price: 1999, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80' }, // T-Shirt
@@ -451,30 +395,19 @@
               .to(".login-content-anim", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=1");
         });
 
-        // --- SLIDER LOGIC ---
-        function updateSlide() {
-            sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
-        }
-        function nextSlide() {
-            if (currentSlide < 2) currentSlide++;
-            else currentSlide = 0;
-            updateSlide();
-        }
-        function prevSlide() {
-            if (currentSlide > 0) currentSlide--;
-            else currentSlide = 2;
-            updateSlide();
-        }
+        // --- SLIDER ---
+        function updateSlide() { sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`; }
+        function nextSlide() { currentSlide = (currentSlide < 2) ? currentSlide + 1 : 0; updateSlide(); }
+        function prevSlide() { currentSlide = (currentSlide > 0) ? currentSlide - 1 : 2; updateSlide(); }
 
-        // --- SNOW LOGIC ---
+        // --- SNOW ---
         function createSnowflakes() {
             snowContainer.innerHTML = '';
             for (let i = 0; i < 50; i++) {
                 const flake = document.createElement('div');
                 flake.classList.add('snowflake');
                 const size = Math.random() * 5 + 2 + 'px';
-                flake.style.width = size;
-                flake.style.height = size;
+                flake.style.width = size; flake.style.height = size;
                 flake.style.left = Math.random() * 100 + 'vw';
                 flake.style.animationDuration = Math.random() * 3 + 2 + 's';
                 flake.style.animationDelay = Math.random() * 2 + 's';
@@ -482,16 +415,11 @@
             }
         }
 
-        // --- MARQUEE LOGIC ---
+        // --- MARQUEE ---
         function createMarquee() {
             const loopProducts = [...products, ...products, ...products];
             marqueeTrack.innerHTML = loopProducts.map(p => `
-                <div class="marquee-item">
-                    <img src="${p.img}" alt="${p.name}">
-                    <div class="absolute bottom-0 left-0 right-0 bg-black/60 p-2 text-white text-[10px] font-bold">
-                        ${p.name}
-                    </div>
-                </div>
+                <div class="marquee-item"><img src="${p.img}" alt="${p.name}"></div>
             `).join('');
         }
 
@@ -510,10 +438,7 @@
 
         function handleSignup(e) {
             e.preventDefault();
-            currentUser = { 
-                name: document.getElementById('reg-name').value, 
-                surname: document.getElementById('reg-surname').value 
-            };
+            currentUser = { name: document.getElementById('reg-name').value, surname: document.getElementById('reg-surname').value };
             enterApp();
         }
 
@@ -537,17 +462,16 @@
         function switchView(viewName) {
             window.scrollTo({ top: 0, behavior: 'auto' });
 
-            // Hide ALL
+            // Strict hide
             ['home-view', 'shop-view', 'profile-view', 'cart-view', 'wishlist-view'].forEach(id => {
                 document.getElementById(id).classList.add('section-hidden');
                 document.getElementById(id).classList.remove('section-active');
             });
 
-            // Show Target
-            document.getElementById(viewName + '-view').classList.remove('section-hidden');
-            document.getElementById(viewName + '-view').classList.add('section-active');
+            const target = document.getElementById(viewName + '-view');
+            target.classList.remove('section-hidden');
+            target.classList.add('section-active');
 
-            // Handle Global Elements
             if (viewName === 'home') {
                 snowContainer.style.display = 'block';
                 sliderControls.style.display = 'flex';
@@ -565,25 +489,20 @@
             }
         }
 
-        // --- SHOP, SEARCH & WISHLIST ---
+        // --- LOGIC ---
         function renderFilters() {
             if(brandFilters.innerHTML !== "") return;
             brandFilters.innerHTML = brands.map(brand => `
                 <button onclick="filterBrand('${brand}', this)" 
-                class="filter-btn px-6 py-2 rounded-full text-sm font-bold transition whitespace-nowrap ${brand === 'All' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">
-                    ${brand}
-                </button>
+                class="filter-btn px-6 py-2 rounded-full text-sm font-bold transition whitespace-nowrap ${brand === 'All' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">${brand}</button>
             `).join('');
         }
 
-        function handleSearch() {
-            renderProducts(currentBrand);
-        }
+        function handleSearch() { renderProducts(currentBrand); }
 
         function renderProducts(brand) {
             currentBrand = brand;
             const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || '';
-            
             productGrid.innerHTML = '';
             
             const filtered = products.filter(p => {
@@ -592,10 +511,7 @@
                 return matchesBrand && matchesSearch;
             });
             
-            if (filtered.length === 0) {
-                productGrid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No products found.</p>';
-                return;
-            }
+            if (filtered.length === 0) { productGrid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No products found.</p>'; return; }
 
             filtered.forEach((product, index) => {
                 const isWishlisted = wishlistItems.some(i => i.id === product.id);
@@ -606,14 +522,8 @@
                         <img src="${product.img}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
                         <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div>
                         <div class="absolute top-4 left-4 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">${product.brand}</div>
-                        
-                        <button onclick="toggleWishlist(${product.id}, this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/50 backdrop-blur-md flex items-center justify-center hover:bg-white transition z-10">
-                            <i class="ph ${isWishlisted ? 'ph-heart-fill text-red-500' : 'ph-heart'} text-lg"></i>
-                        </button>
-
-                        <button onclick="addToCart(${product.id})" class="absolute bottom-4 right-4 bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-300 hover:bg-black hover:text-white">
-                            <i class="ph ph-plus text-lg"></i>
-                        </button>
+                        <button onclick="toggleWishlist(${product.id}, this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/50 backdrop-blur-md flex items-center justify-center hover:bg-white transition z-10"><i class="ph ${isWishlisted ? 'ph-heart-fill text-red-500' : 'ph-heart'} text-lg"></i></button>
+                        <button onclick="addToCart(${product.id})" class="absolute bottom-4 right-4 bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-300 hover:bg-black hover:text-white"><i class="ph ph-plus text-lg"></i></button>
                     </div>
                     <h3 class="text-lg font-bold">${product.name}</h3>
                     <p class="text-gray-500">₹${product.price.toLocaleString()}</p>
@@ -633,53 +543,27 @@
             const product = products.find(p => p.id === id);
             const index = wishlistItems.findIndex(i => i.id === id);
             const icon = btn.querySelector('i');
-
-            if (index > -1) {
-                wishlistItems.splice(index, 1);
-                icon.className = "ph ph-heart text-lg";
-            } else {
-                wishlistItems.push(product);
-                icon.className = "ph ph-heart-fill text-red-500 text-lg";
-            }
+            if (index > -1) { wishlistItems.splice(index, 1); icon.className = "ph ph-heart text-lg"; } 
+            else { wishlistItems.push(product); icon.className = "ph ph-heart-fill text-red-500 text-lg"; }
             document.getElementById('profile-wishlist-count').innerText = wishlistItems.length;
         }
 
         function renderWishlist() {
             wishlistGrid.innerHTML = '';
-            if (wishlistItems.length === 0) {
-                wishlistGrid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">Your wishlist is empty.</p>';
-                return;
-            }
-
-            wishlistItems.forEach((product, index) => {
-                const card = document.createElement('div');
-                card.className = "group";
-                card.innerHTML = `
-                    <div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4 cursor-pointer">
-                        <img src="${product.img}" class="w-full h-full object-cover">
-                        <button onclick="toggleWishlist(${product.id}, this); renderWishlist();" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-md">
-                            <i class="ph ph-heart-fill text-red-500 text-lg"></i>
-                        </button>
-                    </div>
-                    <h3 class="text-lg font-bold">${product.name}</h3>
-                    <p class="text-gray-500">₹${product.price.toLocaleString()}</p>
-                `;
+            if (wishlistItems.length === 0) { wishlistGrid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">Your wishlist is empty.</p>'; return; }
+            wishlistItems.forEach((product) => {
+                const card = document.createElement('div'); card.className = "group";
+                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4"><img src="${product.img}" class="w-full h-full object-cover"></div><h3 class="text-lg font-bold">${product.name}</h3><p class="text-gray-500">₹${product.price.toLocaleString()}</p>`;
                 wishlistGrid.appendChild(card);
             });
         }
 
         function addToCart(id) {
             const product = products.find(p => p.id === id);
-            cartItems.push(product);
-            updateCartBadge();
-            alert(`${product.name} added to bag!`);
+            cartItems.push(product); updateCartBadge(); alert(`${product.name} added to bag!`);
         }
 
-        function removeFromCart(index) {
-            cartItems.splice(index, 1);
-            updateCartBadge();
-            renderCart();
-        }
+        function removeFromCart(index) { cartItems.splice(index, 1); updateCartBadge(); renderCart(); }
 
         function updateCartBadge() {
             cartBadge.innerText = cartItems.length;
@@ -688,34 +572,12 @@
         }
 
         function renderCart() {
-            if (cartItems.length === 0) {
-                cartItemsContainer.innerHTML = '<p class="text-gray-500 text-lg">Your bag is currently empty.</p>';
-                document.getElementById('cart-subtotal').innerText = '₹0';
-                document.getElementById('cart-total').innerText = '₹0';
-                return;
-            }
-
+            if (cartItems.length === 0) { cartItemsContainer.innerHTML = '<p class="text-gray-500 text-lg">Your bag is currently empty.</p>'; document.getElementById('cart-subtotal').innerText = '₹0'; document.getElementById('cart-total').innerText = '₹0'; return; }
             let total = 0;
             cartItemsContainer.innerHTML = cartItems.map((item, index) => {
                 total += item.price;
-                return `
-                <div class="flex gap-4 mb-6 border-b border-gray-100 pb-6">
-                    <div class="w-24 h-32 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
-                        <img src="${item.img}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="flex-1 flex justify-between">
-                        <div>
-                            <h3 class="font-bold text-lg">${item.name}</h3>
-                            <p class="text-gray-500 text-sm mb-2">${item.brand}</p>
-                            <p class="font-bold">₹${item.price.toLocaleString()}</p>
-                        </div>
-                        <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 self-start">
-                            <i class="ph ph-trash text-xl"></i>
-                        </button>
-                    </div>
-                </div>`;
+                return `<div class="flex gap-4 mb-6 border-b border-gray-100 pb-6"><div class="w-24 h-32 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0"><img src="${item.img}" class="w-full h-full object-cover"></div><div class="flex-1 flex justify-between"><div><h3 class="font-bold text-lg">${item.name}</h3><p class="text-gray-500 text-sm mb-2">${item.brand}</p><p class="font-bold">₹${item.price.toLocaleString()}</p></div><button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 self-start"><i class="ph ph-trash text-xl"></i></button></div></div>`;
             }).join('');
-
             document.getElementById('cart-subtotal').innerText = '₹' + total.toLocaleString();
             document.getElementById('cart-total').innerText = '₹' + total.toLocaleString();
         }
