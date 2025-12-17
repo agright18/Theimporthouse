@@ -33,14 +33,6 @@
         .section-hidden { display: none !important; }
         .section-active { display: block !important; }
 
-        /* --- NAV ANIMATION --- */
-        .nav-item { position: relative; cursor: pointer; }
-        .nav-item::after {
-            content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0;
-            background-color: black; transition: width 0.3s ease-out;
-        }
-        .nav-item:hover::after { width: 100%; }
-
         /* --- SNOWFALL --- */
         #snow-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -127,7 +119,7 @@
             <p class="text-gray-500 text-sm mb-6">Total Amount: <span id="modal-total" class="font-bold text-black text-lg">₹0</span></p>
             
             <div class="bg-gray-100 p-4 rounded-2xl mb-6 mx-auto w-64 h-64 flex items-center justify-center">
-                <img src="qrcode.jpg" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=YOUR_UPI_ID&pn=ImportHouse&mc=0000&tid=123456&tr=123456&tn=Payment%20for%20Import%20House&am=0&cu=INR'" 
+                <img src="qrcode.jpg" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=YOUR_UPI_ID&pn=ImportHouse'" 
                      alt="Payment QR Code" class="w-full h-full object-contain mix-blend-multiply">
             </div>
 
@@ -152,7 +144,7 @@
             <div id="login-form" class="absolute inset-0 flex items-center justify-center p-6 bg-white transition-opacity duration-500">
                 <div class="max-w-md w-full login-content-anim opacity-0 translate-y-4">
                     <div class="mb-10 text-center">
-                        <img src="theimporthouse.webp" class="w-20 h-auto mx-auto mb-4" alt="Import House">
+                        
                         <h1 class="text-4xl font-black tracking-tight mb-2">Welcome Back.</h1>
                         <p class="text-gray-500">Enter your credentials.</p>
                     </div>
@@ -289,11 +281,11 @@
             <button onclick="switchView('home')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition">
                 <i class="ph ph-arrow-left text-lg"></i> Back to Home
             </button>
-            <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900"><img src="https://images.unsplash.com/photo-1614850523060-8da1d56e37def?auto=format&fit=crop&w=1600&q=80" class="w-full h-full object-cover opacity-80"></div>
+            <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden opacity-0 translate-y-4">
+                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900"><img src="banner.jpg?auto=format&fit=crop&w=1600&q=80" class="w-full h-full object-cover opacity-80"></div>
                 <div class="px-6 md:px-8 pb-8 relative">
                     <div class="absolute -top-10 md:-top-12 left-6 md:left-8 w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white p-1 shadow-lg"><div class="w-full h-full bg-black text-white rounded-xl flex items-center justify-center text-3xl md:text-4xl font-black"><span id="user-initial">G</span></div></div>
-                    <div class="pt-12 md:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center"><div><h2 id="display-name" class="text-2xl font-black text-gray-900">Guest User</h2><p class="text-gray-500 text-sm">Joined 2025</p></div><button onclick="logout()" class="mt-4 md:mt-0 px-6 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition flex items-center gap-2 text-sm md:text-base"><i class="ph ph-sign-out"></i> Sign Out</button></div>
+                    <div class="pt-12 md:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center"><div><h2 id="display-name" class="text-2xl font-black text-gray-900">Guest User</h2><p class="text-gray-500 text-sm">Joined 2025</p></div><button onclick="logout()" class="mt-4 md:mt-0 px-6 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition flex items-center gap-2 text-sm"><i class="ph ph-sign-out"></i> Sign Out</button></div>
                     <div class="grid grid-cols-2 gap-4 my-8"><div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center"><div class="text-2xl font-black mb-1" id="profile-order-count">0</div><div class="text-xs text-gray-500 uppercase font-bold">Orders</div></div><div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center"><div class="text-2xl font-black mb-1" id="profile-wishlist-count">0</div><div class="text-xs text-gray-500 uppercase font-bold">Wishlist</div></div></div>
                 </div>
             </div>
@@ -302,21 +294,54 @@
         <footer id="footer" class="bg-black text-white py-12 md:py-16 border-t border-gray-900 relative z-50">
             <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
                 <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center gap-2 mb-4"><img src="theimporthouse.webp" class="h-10 md:h-12 w-auto object-contain" alt="Import House"></div>
-                    <p class="text-gray-400 max-w-xs mb-6 text-sm">Premium streetwear and luxury fashion.</p>
+                    <div class="flex items-center gap-2 mb-4">
+                        <img src="theimporthouse.webp" class="h-10 md:h-12 w-auto object-contain" alt="Import House">
+                    </div>
+                    <p class="text-gray-400 max-w-xs mb-6 text-sm md:text-base">
+                        The world's leading destination for premium streetwear and luxury fashion. Curated for the modern aesthetic.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center hover:bg-white hover:text-black transition"><i class="ph ph-instagram-logo text-lg"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center hover:bg-white hover:text-black transition"><i class="ph ph-twitter-logo text-lg"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center hover:bg-white hover:text-black transition"><i class="ph ph-tiktok-logo text-lg"></i></a>
+                    </div>
                 </div>
-                <div class="hidden md:block"><h3 class="font-bold mb-4">Discover</h3><ul class="space-y-3 text-gray-400 text-sm"><li><a href="#" onclick="switchView('shop')" class="hover:text-white">New Arrivals</a></li><li><a href="#" onclick="switchView('shop')" class="hover:text-white">Brands</a></li></ul></div>
+                <div class="grid grid-cols-2 gap-8 md:flex md:gap-12 md:col-span-2">
+                    <div>
+                        <h3 class="font-bold mb-4">Discover</h3>
+                        <ul class="space-y-3 text-gray-400 text-sm">
+                            <li><a href="#" onclick="switchView('shop')" class="hover:text-white transition">New Arrivals</a></li>
+                            <li><a href="#" onclick="switchView('shop')" class="hover:text-white transition">Brands</a></li>
+                            <li><a href="#" class="hover:text-white transition">Editor's Choice</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold mb-4">Support</h3>
+                        <ul class="space-y-3 text-gray-400 text-sm">
+                            <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+                            <li><a href="#" class="hover:text-white transition">Returns</a></li>
+                            <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-gray-900 text-gray-500 text-xs flex justify-between"><p>&copy; 2025 Import House Inc.</p></div>
+            <div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-gray-900 text-gray-500 text-xs flex flex-col md:flex-row justify-between gap-4">
+                <p>&copy; 2025 Import House Inc.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-white">Privacy Policy</a>
+                    <a href="#" class="hover:text-white">Terms</a>
+                </div>
+            </div>
         </footer>
+
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- ⚠️ PASTE YOUR REAL KEYS HERE ⚠️ ---
+        // --- ⚠️ IMPORTANT: PASTE YOUR REAL KEYS HERE ⚠️ ---
         const firebaseConfig = {
             apiKey: "AIzaSyAVAhzIDoiFiGxHN0z2ze9TSocB3Cbb6i8",
   authDomain: "shop-clothes-aded9.firebaseapp.com",
@@ -326,56 +351,114 @@
   appId: "1:119802803208:web:984c947412580274268dbd",
         };
 
+        // Initialize
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        window.auth = auth;
-        window.db = db;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.serverTimestamp = serverTimestamp;
+        // Global User State
+        window.currentUser = { name: "Guest", surname: "User" };
 
+        // --- 1. SIGN UP (With Error Popup) ---
         window.handleSignup = async (e) => {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
             const surname = document.getElementById('reg-surname').value;
             const email = document.getElementById('reg-email').value;
             const password = document.getElementById('reg-password').value;
+            const btn = e.target.querySelector('button');
+
+            btn.innerHTML = "Creating...";
+            
             try {
+                // 1. Create Auth User
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await setDoc(doc(db, "users", userCredential.user.uid), { firstName: name, lastName: surname, email: email });
-                alert("Account Created!");
-            } catch (error) { alert("Error: " + error.message); }
+                const user = userCredential.user;
+                
+                // 2. Save Name to Database
+                await setDoc(doc(db, "users", user.uid), {
+                    firstName: name,
+                    lastName: surname,
+                    email: email
+                });
+
+                alert("✅ Account Created Successfully! You are now logged in.");
+                // Auth listener will handle the screen switch
+                
+            } catch (error) {
+                console.error(error);
+                // SHOW ERROR TO USER
+                alert("❌ SIGNUP FAILED:\n" + error.message);
+                btn.innerHTML = "Create Account";
+            }
         }
 
+        // --- 2. LOGIN (With Error Popup) ---
         window.handleLogin = async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { alert("Error: " + error.message); }
+            const btn = e.target.querySelector('button');
+
+            btn.innerHTML = "Signing in...";
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // Alert removed for cleaner UX, but login will work
+            } catch (error) {
+                console.error(error);
+                alert("❌ LOGIN FAILED:\n" + error.message);
+                btn.innerHTML = "<span>Sign In</span> <i class='ph ph-arrow-right'></i>";
+            }
         }
 
-        window.logout = async () => { if(confirm("Sign out?")) { await signOut(auth); location.reload(); } }
+        // --- 3. LOGOUT ---
+        window.logout = async () => {
+            if(confirm("Are you sure you want to sign out?")) {
+                await signOut(auth);
+                location.reload();
+            }
+        }
 
+        // --- 4. AUTO-LOGIN LISTENER ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const docSnap = await getDoc(doc(db, "users", user.uid));
-                if (docSnap.exists()) {
-                    const d = docSnap.data();
-                    document.getElementById('display-name').innerText = `${d.firstName} ${d.lastName}`;
-                    document.getElementById('user-initial').innerText = d.firstName.charAt(0).toUpperCase();
+                try {
+                    const docRef = doc(db, "users", user.uid);
+                    const docSnap = await getDoc(docRef);
+                    
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        window.currentUser = { name: userData.firstName, surname: userData.lastName };
+                    } else {
+                        window.currentUser = { name: "User", surname: "" };
+                    }
+
+                    // Update UI
+                    document.getElementById('display-name').innerText = `${window.currentUser.name} ${window.currentUser.surname}`;
+                    document.getElementById('user-initial').innerText = window.currentUser.name.charAt(0).toUpperCase();
+
+                    // Switch Screen
+                    document.getElementById('auth-container').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                    document.body.classList.add('app-active');
+                    
+                    // Hide Intro
+                    const intro = document.getElementById('intro-overlay');
+                    if(intro) intro.style.display = 'none';
+                    
+                    // If functions exist (from other script), call them
+                    if(typeof switchView === 'function') switchView('home');
+
+                } catch (err) {
+                    console.error("Error fetching user data:", err);
                 }
-                document.getElementById('auth-container').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                document.body.classList.add('app-active');
-                if(document.getElementById('intro-overlay')) document.getElementById('intro-overlay').style.display = 'none';
-                if(typeof switchView === 'function') switchView('home');
             }
         });
     </script>
 
     <script>
+        // ... (Variables from before) ...
         let cartItems = [];
         let wishlistItems = [];
         let currentSlide = 0;
@@ -392,46 +475,50 @@
         ];
         const brands = ['All', 'Nike', 'Adidas', 'Levis', 'Puma', 'Zara'];
 
+        // UI Variables
+        const productGrid = document.getElementById('product-grid');
+        const brandFilters = document.getElementById('brand-filters');
         const cartBadge = document.getElementById('cart-badge');
         const cartItemsContainer = document.getElementById('cart-items-container');
+        const snowContainer = document.getElementById('snow-container');
+        const marqueeTrack = document.getElementById('marquee-track');
+        const wishlistGrid = document.getElementById('wishlist-grid');
         const sliderTrack = document.getElementById('slider-track');
+        const sliderControls = document.getElementById('slider-controls');
         const paymentModal = document.getElementById('payment-modal');
 
+        // Init UI (Auth handled by module above)
         window.addEventListener('load', () => {
-            renderFilters();
+            createSnowflakes();
             createMarquee();
+            
+            // Initial animation only runs if not auto-logged in by Firebase
+            setTimeout(() => {
+                if(!document.body.classList.contains('app-active')) {
+                    const tl = gsap.timeline();
+                    tl.to("#door-left", { x: "-100%", duration: 1.5, ease: "power4.inOut", delay: 0.5 })
+                      .to("#door-right", { x: "100%", duration: 1.5, ease: "power4.inOut" }, "<")
+                      .to("#intro-overlay", { display: "none" })
+                      .to(".login-img-anim", { scale: 1, duration: 2, ease: "power2.out" }, "-=1.5")
+                      .to(".login-content-anim", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=1");
+                }
+            }, 500);
         });
 
-        function switchView(viewName) {
-            window.scrollTo({ top: 0, behavior: 'auto' });
-            ['home-view', 'shop-view', 'profile-view', 'cart-view', 'wishlist-view', 'checkout-view'].forEach(id => {
-                document.getElementById(id).classList.add('section-hidden');
-                document.getElementById(id).classList.remove('section-active');
-            });
-            document.getElementById(viewName + '-view').classList.remove('section-hidden');
-            document.getElementById(viewName + '-view').classList.add('section-active');
-
-            if (viewName === 'home') {
-                document.getElementById('snow-container').style.display = 'block';
-                document.getElementById('slider-controls').style.display = 'flex';
-                gsap.fromTo(".hero-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6 });
-            } else {
-                document.getElementById('snow-container').style.display = 'none';
-                document.getElementById('slider-controls').style.display = 'none';
-            }
-
-            if (viewName === 'shop') { renderProducts(currentBrand); }
-            if (viewName === 'cart') { renderCart(); }
-            if (viewName === 'wishlist') { renderWishlist(); }
-            if (viewName === 'profile') { gsap.fromTo(".profile-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }); }
+        // Toggle Auth Forms
+        function toggleAuth(mode) {
+            const login = document.getElementById('login-form');
+            const signup = document.getElementById('signup-form');
+            if(mode === 'signup') { login.style.opacity = '0'; login.style.pointerEvents = 'none'; signup.style.opacity = '1'; signup.style.pointerEvents = 'auto'; } 
+            else { signup.style.opacity = '0'; signup.style.pointerEvents = 'none'; login.style.opacity = '1'; login.style.pointerEvents = 'auto'; }
         }
 
+        // Standard UI Functions
         function updateSlide() { sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`; }
         function nextSlide() { currentSlide = (currentSlide < 2) ? currentSlide + 1 : 0; updateSlide(); }
         function prevSlide() { currentSlide = (currentSlide > 0) ? currentSlide - 1 : 2; updateSlide(); }
 
         function createSnowflakes() {
-            const snowContainer = document.getElementById('snow-container');
             snowContainer.innerHTML = '';
             for (let i = 0; i < 50; i++) {
                 const flake = document.createElement('div');
@@ -444,56 +531,81 @@
                 snowContainer.appendChild(flake);
             }
         }
+
         function createMarquee() {
             const loopProducts = [...products, ...products, ...products];
-            document.getElementById('marquee-track').innerHTML = loopProducts.map(p => `<div class="marquee-item"><img src="${p.img}" alt="${p.name}"></div>`).join('');
+            marqueeTrack.innerHTML = loopProducts.map(p => `<div class="marquee-item"><img src="${p.img}" alt="${p.name}"></div>`).join('');
         }
-        function toggleAuth(mode) {
-            if(mode === 'signup') { document.getElementById('login-form').style.opacity='0'; document.getElementById('login-form').style.pointerEvents='none'; document.getElementById('signup-form').style.opacity='1'; document.getElementById('signup-form').style.pointerEvents='auto'; }
-            else { document.getElementById('signup-form').style.opacity='0'; document.getElementById('signup-form').style.pointerEvents='none'; document.getElementById('login-form').style.opacity='1'; document.getElementById('login-form').style.pointerEvents='auto'; }
+
+        function switchView(viewName) {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            ['home-view', 'shop-view', 'profile-view', 'cart-view', 'wishlist-view', 'checkout-view'].forEach(id => {
+                document.getElementById(id).classList.add('section-hidden');
+                document.getElementById(id).classList.remove('section-active');
+            });
+            document.getElementById(viewName + '-view').classList.remove('section-hidden');
+            document.getElementById(viewName + '-view').classList.add('section-active');
+
+            if (viewName === 'home') {
+                snowContainer.style.display = 'block';
+                sliderControls.style.display = 'flex';
+                // Note: Footer is kept VISIBLE on home per latest request
+                gsap.fromTo(".hero-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6 });
+            } else {
+                snowContainer.style.display = 'none';
+                sliderControls.style.display = 'none';
+            }
+
+            if (viewName === 'shop') { renderFilters(); renderProducts(currentBrand); }
+            if (viewName === 'cart') { renderCart(); }
+            if (viewName === 'wishlist') { renderWishlist(); }
+            if (viewName === 'profile') { gsap.fromTo(".profile-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }); }
         }
 
         function renderFilters() {
-            if(document.getElementById('brand-filters').innerHTML !== "") return;
-            document.getElementById('brand-filters').innerHTML = brands.map(brand => `<button onclick="filterBrand('${brand}', this)" class="filter-btn px-6 py-2 rounded-full text-sm font-bold transition whitespace-nowrap ${brand === 'All' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">${brand}</button>`).join('');
+            if(brandFilters.innerHTML !== "") return;
+            brandFilters.innerHTML = brands.map(brand => `<button onclick="filterBrand('${brand}', this)" class="filter-btn px-6 py-2 rounded-full text-sm font-bold transition whitespace-nowrap ${brand === 'All' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">${brand}</button>`).join('');
         }
+
         function handleSearch() { renderProducts(currentBrand); }
+
+        function renderProducts(brand) {
+            currentBrand = brand;
+            const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || '';
+            productGrid.innerHTML = '';
+            const filtered = products.filter(p => { return (brand === 'All' || p.brand === brand) && p.name.toLowerCase().includes(searchTerm); });
+            if (filtered.length === 0) { productGrid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No products found.</p>'; return; }
+            filtered.forEach((product, index) => {
+                const isWishlisted = wishlistItems.some(i => i.id === product.id);
+                const card = document.createElement('div'); card.className = "group opacity-0 translate-y-4";
+                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4 cursor-pointer"><img src="${product.img}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"><div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div><div class="absolute top-4 left-4 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">${product.brand}</div><button onclick="toggleWishlist(${product.id}, this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/50 backdrop-blur-md flex items-center justify-center hover:bg-white transition z-10"><i class="ph ${isWishlisted ? 'ph-heart-fill text-red-500' : 'ph-heart'} text-lg"></i></button><button onclick="addToCart(${product.id})" class="absolute bottom-4 right-4 bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-300 hover:bg-black hover:text-white"><i class="ph ph-plus text-lg"></i></button></div><h3 class="text-lg font-bold">${product.name}</h3><p class="text-gray-500">₹${product.price.toLocaleString()}</p>`;
+                productGrid.appendChild(card);
+                gsap.to(card, { opacity: 1, y: 0, duration: 0.4, delay: index * 0.05 });
+            });
+        }
+
         function filterBrand(brand, btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.className = b.className.replace('bg-black text-white', 'bg-gray-100 text-gray-600'));
             btn.className = btn.className.replace('bg-gray-100 text-gray-600', 'bg-black text-white');
             renderProducts(brand);
         }
-        function renderProducts(brand) {
-            currentBrand = brand;
-            const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || '';
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
-            const filtered = products.filter(p => { return (brand === 'All' || p.brand === brand) && p.name.toLowerCase().includes(searchTerm); });
-            if (filtered.length === 0) { grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No products found.</p>'; return; }
-            filtered.forEach((product, index) => {
-                const isWishlisted = wishlistItems.some(i => i.id === product.id);
-                const card = document.createElement('div'); card.className = "group opacity-0 translate-y-4";
-                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4 cursor-pointer"><img src="${product.img}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"><div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div><div class="absolute top-4 left-4 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">${product.brand}</div><button onclick="toggleWishlist(${product.id}, this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/50 backdrop-blur-md flex items-center justify-center hover:bg-white transition z-10"><i class="ph ${isWishlisted ? 'ph-heart-fill text-red-500' : 'ph-heart'} text-lg"></i></button><button onclick="addToCart(${product.id})" class="absolute bottom-4 right-4 bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-300 hover:bg-black hover:text-white"><i class="ph ph-plus text-lg"></i></button></div><h3 class="text-lg font-bold">${product.name}</h3><p class="text-gray-500">₹${product.price.toLocaleString()}</p>`;
-                grid.appendChild(card);
-                gsap.to(card, { opacity: 1, y: 0, duration: 0.4, delay: index * 0.05 });
-            });
-        }
 
         function toggleWishlist(id, btn) {
             const product = products.find(p => p.id === id);
             const index = wishlistItems.findIndex(i => i.id === id);
-            if (index > -1) { wishlistItems.splice(index, 1); btn.querySelector('i').className = "ph ph-heart text-lg"; } 
-            else { wishlistItems.push(product); btn.querySelector('i').className = "ph ph-heart-fill text-red-500 text-lg"; }
+            const icon = btn.querySelector('i');
+            if (index > -1) { wishlistItems.splice(index, 1); icon.className = "ph ph-heart text-lg"; } 
+            else { wishlistItems.push(product); icon.className = "ph ph-heart-fill text-red-500 text-lg"; }
             document.getElementById('profile-wishlist-count').innerText = wishlistItems.length;
         }
+
         function renderWishlist() {
-            const grid = document.getElementById('wishlist-grid');
-            grid.innerHTML = '';
-            if (wishlistItems.length === 0) { grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">Your wishlist is empty.</p>'; return; }
+            wishlistGrid.innerHTML = '';
+            if (wishlistItems.length === 0) { wishlistGrid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">Your wishlist is empty.</p>'; return; }
             wishlistItems.forEach((product) => {
                 const card = document.createElement('div'); card.className = "group";
-                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4"><img src="${product.img}" class="w-full h-full object-cover"></div><h3 class="text-lg font-bold">${product.name}</h3><p class="text-gray-500">₹${product.price.toLocaleString()}</p>`;
-                grid.appendChild(card);
+                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4"><img src="${product.img}" class="w-full h-full object-cover"><button onclick="toggleWishlist(${product.id}, this); renderWishlist();" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-md"><i class="ph ph-heart-fill text-red-500 text-lg"></i></button></div><h3 class="text-lg font-bold">${product.name}</h3><p class="text-gray-500">₹${product.price.toLocaleString()}</p>`;
+                wishlistGrid.appendChild(card);
             });
         }
 
@@ -526,44 +638,23 @@
             paymentModal.classList.remove('flex');
         }
 
-        async function finalizeOrder() {
-            const btn = document.querySelector('#payment-modal button:last-child');
-            btn.innerHTML = "Processing Order...";
-            
+        function finalizeOrder() {
             const fname = document.getElementById('checkout-fname').value;
             const lname = document.getElementById('checkout-lname').value;
             const address = document.getElementById('checkout-address').value;
             const city = document.getElementById('checkout-city').value;
             const zip = document.getElementById('checkout-zip').value;
             const phone = document.getElementById('checkout-phone').value;
+
+            let itemsList = "";
             let total = 0;
-            cartItems.forEach(item => total += item.price);
+            cartItems.forEach(item => { itemsList += `- ${item.name} (${item.brand}): ₹${item.price}\n`; total += item.price; });
 
-            const orderData = {
-                userId: window.auth.currentUser ? window.auth.currentUser.uid : "guest",
-                customer: { firstName: fname, lastName: lname, address: address, city: city, zip: zip, phone: phone },
-                items: cartItems,
-                totalAmount: total,
-                paymentStatus: "Paid via QR",
-                status: "Pending",
-                timestamp: window.serverTimestamp()
-            };
-
-            try {
-                await window.addDoc(window.collection(window.db, "orders"), orderData);
-                
-                alert("✅ Order Placed Successfully! We have received your payment details.");
-                closePaymentModal();
-                cartItems = []; 
-                updateCartBadge(); 
-                renderCart(); 
-                switchView('home');
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                alert("Error placing order: " + error.message);
-            } finally {
-                btn.innerHTML = '<i class="ph ph-check-circle text-xl"></i> Confirm Payment & Place Order';
-            }
+            const message = `*NEW ORDER FROM IMPORT HOUSE* 🛍️\n\n*Customer Details:*\nName: ${fname} ${lname}\nPhone: ${phone}\nAddress: ${address}, ${city} - ${zip}\n\n*Order Items:*\n${itemsList}\n*TOTAL AMOUNT: ₹${total.toLocaleString()}*\n*PAYMENT STATUS:* ✅ Payment Completed via QR\n\nPlease process my order.`;
+            const url = `https://wa.me/${MERCHANT_PHONE}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            closePaymentModal();
+            cartItems = []; updateCartBadge(); renderCart(); switchView('home');
         }
     </script>
 </body>
