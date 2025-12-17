@@ -108,7 +108,7 @@
         <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center relative animate-fade-in-up">
             <div class="checkmark-circle"><div class="background"></div><div class="checkmark"></div></div>
             <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
-            <p class="text-gray-500 text-sm mb-6">We have received your order.</p>
+            <p class="text-gray-500 text-sm mb-6">Thank you for shopping with Import House.</p>
             <button onclick="resetApp()" class="w-full bg-black text-white font-bold py-3 rounded-full">Continue Shopping</button>
         </div>
     </div>
@@ -338,6 +338,13 @@
             // Load Cart from LocalStorage
             const storedCart = localStorage.getItem('importHouseCart');
             if (storedCart) { cartItems = JSON.parse(storedCart); updateCartBadge(); }
+            
+            // Load Wishlist from LocalStorage
+            const storedWish = localStorage.getItem('importHouseWishlist');
+            if (storedWish) { wishlistItems = JSON.parse(storedWish); 
+                const wishCount = document.getElementById('profile-wishlist-count');
+                if(wishCount) wishCount.innerText = wishlistItems.length;
+            }
 
             const savedUser = localStorage.getItem('importHouseUser');
             if (savedUser) {
@@ -472,7 +479,7 @@
                 grid.appendChild(card); gsap.to(card, { opacity: 1, y: 0, duration: 0.4, delay: i * 0.05 });
             });
         }
-        function toggleWishlist(id, btn) { const p = products.find(x=>x.id===id); const i = wishlistItems.findIndex(x=>x.id===id); if(i>-1) { wishlistItems.splice(i,1); btn.querySelector('i').className="ph ph-heart text-lg"; } else { wishlistItems.push(p); btn.querySelector('i').className="ph ph-heart-fill text-red-500 text-lg"; } document.getElementById('profile-wishlist-count').innerText = wishlistItems.length; }
+        function toggleWishlist(id, btn) { const p = products.find(x=>x.id===id); const i = wishlistItems.findIndex(x=>x.id===id); if(i>-1) { wishlistItems.splice(i,1); btn.querySelector('i').className="ph ph-heart text-lg"; } else { wishlistItems.push(p); btn.querySelector('i').className="ph ph-heart-fill text-red-500 text-lg"; } localStorage.setItem('importHouseWishlist', JSON.stringify(wishlistItems)); document.getElementById('profile-wishlist-count').innerText = wishlistItems.length; }
         function renderWishlist() { const g = document.getElementById('wishlist-grid'); g.innerHTML=''; wishlistItems.forEach(p => { g.innerHTML += `<div class="group"><div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4"><img src="${p.img}" class="w-full h-full object-cover"></div><h3 class="font-bold">${p.name}</h3><p>₹${p.price.toLocaleString()}</p></div>`; }); }
         
         function addToCart(id) { 
