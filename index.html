@@ -9,7 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
         tailwind.config = {
@@ -32,15 +31,9 @@
         ::-webkit-scrollbar { width: 0px; background: transparent; }
 
         .section-hidden { display: none !important; }
-        .section-active { display: block !important; }
+        .section-active { display: block !important; animation: fadeIn 0.3s ease-out; }
 
-        /* --- SUCCESS TICK ANIMATION --- */
-        .checkmark-circle { width: 80px; height: 80px; position: relative; display: inline-block; vertical-align: top; margin-bottom: 20px; }
-        .checkmark-circle .background { width: 80px; height: 80px; border-radius: 50%; background: #22c55e; position: absolute; }
-        .checkmark-circle .checkmark { border-radius: 5px; }
-        .checkmark-circle .checkmark.draw:after { animation-delay: 100ms; animation-duration: 1s; animation-timing-function: ease; animation-name: checkmark; transform: scaleX(-1) rotate(135deg); animation-fill-mode: forwards; }
-        .checkmark-circle .checkmark:after { opacity: 1; height: 40px; width: 20px; transform-origin: left top; border-right: 4px solid white; border-top: 4px solid white; content: ''; left: 22px; top: 40px; position: absolute; }
-        @keyframes checkmark { 0% { height: 0; width: 0; opacity: 1; } 20% { height: 0; width: 20px; opacity: 1; } 40% { height: 40px; width: 20px; opacity: 1; } 100% { height: 40px; width: 20px; opacity: 1; transform: scaleX(-1) rotate(135deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- SNOWFALL --- */
         #snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; display: none; }
@@ -52,7 +45,6 @@
         .marquee-track { display: inline-flex; gap: 1rem; animation: scroll 20s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .marquee-item { width: 120px; height: 160px; border-radius: 0.75rem; overflow: hidden; background: #f3f4f6; flex-shrink: 0; position: relative; }
-        @media (min-width: 768px) { .marquee-item { width: 150px; height: 200px; } }
         .marquee-item img { width: 100%; height: 100%; object-fit: cover; }
 
         /* --- SLIDER --- */
@@ -68,6 +60,12 @@
         .nav-item { position: relative; cursor: pointer; }
         .nav-item::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: black; transition: width 0.3s ease-out; }
         .nav-item:hover::after { width: 100%; }
+
+        /* Success Checkmark */
+        .checkmark-circle { width: 80px; height: 80px; position: relative; display: inline-block; vertical-align: top; margin-bottom: 20px; }
+        .checkmark-circle .background { width: 80px; height: 80px; border-radius: 50%; background: #22c55e; position: absolute; }
+        .checkmark-circle .checkmark { border-radius: 5px; }
+        .checkmark-circle .checkmark:after { opacity: 1; height: 40px; width: 20px; transform-origin: left top; border-right: 4px solid white; border-top: 4px solid white; content: ''; left: 22px; top: 40px; position: absolute; border-width: 4px; border-style: solid; border-color: white; border-top: none; border-right: none; transform: rotate(-45deg); }
     </style>
 </head>
 <body class="text-slate-900">
@@ -90,12 +88,24 @@
         <div id="door-right" class="w-1/2 h-full bg-black flex items-center justify-start relative z-20"><span class="text-white text-3xl md:text-6xl font-black tracking-tighter ml-2 md:ml-4">HOUSE</span></div>
     </div>
 
+    <div id="payment-modal" class="fixed inset-0 z-[300] bg-black/90 hidden items-center justify-center px-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center relative animate-fade-in-up">
+            <button onclick="closeModal('payment-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-black"><i class="ph ph-x text-2xl"></i></button>
+            <h2 class="text-2xl font-black mb-1">Scan to Pay</h2>
+            <p class="text-gray-500 text-sm mb-6">Total: <span id="modal-total" class="font-bold text-black text-lg">₹0</span></p>
+            <div class="bg-gray-100 p-4 rounded-2xl mb-6 mx-auto w-64 h-64 flex items-center justify-center">
+                <img src="qrcode.jpg" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=YOUR_UPI_ID'" alt="QR Code" class="w-full h-full object-contain mix-blend-multiply">
+            </div>
+            <p class="text-xs text-gray-400 mb-4">GPay • PhonePe • Paytm • UPI</p>
+            <button onclick="processOrder('Online')" class="w-full bg-green-600 text-white font-bold py-4 rounded-full hover:bg-green-700 transition">Payment Completed</button>
+        </div>
+    </div>
+
     <div id="success-modal" class="fixed inset-0 z-[300] bg-black/90 hidden items-center justify-center px-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center relative animate-fade-in-up">
-            <div class="checkmark-circle"><div class="background"></div><div class="checkmark draw"></div></div>
+            <div class="checkmark-circle"><div class="background"></div><div class="checkmark"></div></div>
             <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
-            <p class="text-gray-500 text-sm mb-6">Thank you for shopping with Import House. Your order has been placed.</p>
-            <p id="payment-method-display" class="text-xs font-bold text-blue-600 mb-6 uppercase tracking-wider"></p>
+            <p class="text-gray-500 text-sm mb-6">We have received your order.</p>
             <button onclick="resetApp()" class="w-full bg-black text-white font-bold py-3 rounded-full">Continue Shopping</button>
         </div>
     </div>
@@ -110,7 +120,7 @@
             <div id="login-form" class="absolute inset-0 flex items-center justify-center p-6 bg-white transition-opacity duration-500">
                 <div class="max-w-md w-full login-content-anim opacity-0 translate-y-4">
                     <div class="mb-10 text-center">
-                        
+                        <img src="theimporthouse.webp" class="w-20 h-auto mx-auto mb-4" alt="Import House">
                         <h1 class="text-4xl font-black tracking-tight mb-2">Welcome Back.</h1>
                         <p class="text-gray-500">Enter your credentials.</p>
                     </div>
@@ -186,31 +196,18 @@
                 <div><label class="block text-sm font-bold mb-1">Address</label><input id="checkout-address" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black" placeholder="Street address"></div>
                 <div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold mb-1">City</label><input id="checkout-city" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div><div><label class="block text-sm font-bold mb-1">Pincode</label><input id="checkout-zip" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div></div>
                 <div><label class="block text-sm font-bold mb-1">Phone</label><input id="checkout-phone" required type="tel" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div>
-                
-                <div class="pt-4 mt-6 border-t">
-                    <p class="font-bold text-sm mb-3">Payment Method</p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-black transition bg-gray-50">
-                            <input type="radio" name="payment" value="Online" checked class="mr-3 accent-black w-4 h-4">
-                            <div class="flex-1"><span class="font-bold block text-sm">Online Payment (UPI/Cards)</span><span class="text-xs text-gray-500">Scan QR Code</span></div>
-                            <i class="ph ph-qr-code text-xl"></i>
-                        </label>
-                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-black transition bg-gray-50">
-                            <input type="radio" name="payment" value="COD" class="mr-3 accent-black w-4 h-4">
-                            <div class="flex-1"><span class="font-bold block text-sm">Cash on Delivery</span><span class="text-xs text-gray-500">Pay upon receipt</span></div>
-                            <i class="ph ph-money text-xl"></i>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="pt-6 border-t mt-6"><div class="flex justify-between font-black text-xl mb-6"><span>Total</span> <span id="checkout-total">₹0</span></div><button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-full hover:bg-gray-800 transition">Place Order</button></div>
+                <div class="pt-4 mt-6 border-t"><p class="font-bold text-sm mb-3">Payment Method</p><div class="space-y-3">
+                    <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-black transition bg-gray-50"><input type="radio" name="payment" value="Online" checked class="mr-3 accent-black w-4 h-4"><div class="flex-1"><span class="font-bold block text-sm">Online Payment (UPI/QR)</span><span class="text-xs text-gray-500">Scan & Pay</span></div><i class="ph ph-qr-code text-xl"></i></label>
+                    <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-black transition bg-gray-50"><input type="radio" name="payment" value="COD" class="mr-3 accent-black w-4 h-4"><div class="flex-1"><span class="font-bold block text-sm">Cash on Delivery</span><span class="text-xs text-gray-500">Pay upon receipt</span></div><i class="ph ph-money text-xl"></i></label>
+                </div></div>
+                <div class="pt-6 mt-2"><div class="flex justify-between font-black text-xl mb-6"><span>Total</span> <span id="checkout-total">₹0</span></div><button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-full hover:bg-gray-800 transition">Place Order</button></div>
             </form>
         </section>
 
         <section id="profile-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
             <button onclick="switchView('home')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Home</button>
-            <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden opacity-0 translate-y-4">
-                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900"><img src="image_7a93df.jpg" class="w-full h-full object-cover opacity-80"></div>
+            <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900"><img src="https://images.unsplash.com/photo-1614850523060-8da1d56e37def?auto=format&fit=crop&w=1600&q=80" class="w-full h-full object-cover opacity-80"></div>
                 <div class="px-6 md:px-8 pb-8 relative">
                     <div class="absolute -top-10 md:-top-12 left-6 md:left-8 w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white p-1 shadow-lg"><div class="w-full h-full bg-black text-white rounded-xl flex items-center justify-center text-3xl md:text-4xl font-black"><span id="user-initial">G</span></div></div>
                     <div class="pt-12 md:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center"><div><h2 id="display-name" class="text-2xl font-black text-gray-900">Guest User</h2><p class="text-gray-500 text-sm">Joined 2025</p></div><button onclick="logout()" class="mt-4 md:mt-0 px-6 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition flex items-center gap-2 text-sm md:text-base"><i class="ph ph-sign-out"></i> Sign Out</button></div>
@@ -233,7 +230,6 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- ⚠️ PASTE YOUR REAL KEYS HERE ⚠️ ---
         const firebaseConfig = {
             apiKey: "AIzaSyAVAhzIDoiFiGxHN0z2ze9TSocB3Cbb6i8",
   authDomain: "shop-clothes-aded9.firebaseapp.com",
@@ -246,6 +242,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
         window.auth = auth; window.db = db; window.collection = collection; window.addDoc = addDoc; window.serverTimestamp = serverTimestamp;
 
         window.handleSignup = async (e) => {
@@ -257,32 +254,33 @@
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await setDoc(doc(db, "users", userCredential.user.uid), { firstName: name, lastName: surname, email: email });
-                alert("Account Created!");
+                localStorage.setItem('importHouseUser', JSON.stringify({ name: name, surname: surname }));
+                location.reload();
             } catch (error) { alert("Error: " + error.message); }
         }
 
         window.handleLogin = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { alert("Error: " + error.message); }
+            try { 
+                await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value);
+                location.reload();
+            } catch (error) { alert("Error: " + error.message); }
         }
 
-        window.logout = async () => { if(confirm("Sign out?")) { await signOut(auth); location.reload(); } }
+        window.logout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('importHouseUser'); location.reload(); } }
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const docSnap = await getDoc(doc(db, "users", user.uid));
-                if (docSnap.exists()) {
-                    const d = docSnap.data();
-                    document.getElementById('display-name').innerText = `${d.firstName} ${d.lastName}`;
-                    document.getElementById('user-initial').innerText = d.firstName.charAt(0).toUpperCase();
+                // If user is logged in via firebase, ensure UI is updated
+                const savedUser = localStorage.getItem('importHouseUser');
+                if(!savedUser) {
+                    const docSnap = await getDoc(doc(db, "users", user.uid));
+                    if (docSnap.exists()) {
+                        const d = docSnap.data();
+                        localStorage.setItem('importHouseUser', JSON.stringify({ name: d.firstName, surname: d.lastName }));
+                        location.reload();
+                    }
                 }
-                document.getElementById('auth-container').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                document.body.classList.add('app-active');
-                if(document.getElementById('intro-overlay')) document.getElementById('intro-overlay').style.display = 'none';
-                if(typeof switchView === 'function') switchView('home');
             }
         });
     </script>
@@ -302,20 +300,42 @@
         const brands = ['All', 'Nike', 'Adidas', 'Levis', 'Puma', 'Zara'];
 
         const cartBadge = document.getElementById('cart-badge');
+        const cartItemsContainer = document.getElementById('cart-items-container');
         const sliderTrack = document.getElementById('slider-track');
         const paymentModal = document.getElementById('payment-modal');
         const successModal = document.getElementById('success-modal');
 
-        window.addEventListener('load', () => { renderFilters(); createMarquee(); createSnowflakes(); });
+        window.addEventListener('load', () => {
+            // Check Local Storage
+            const savedUser = localStorage.getItem('importHouseUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('display-name').innerText = `${currentUser.name} ${currentUser.surname}`;
+                document.getElementById('user-initial').innerText = currentUser.name.charAt(0).toUpperCase();
+                document.getElementById('auth-container').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                document.body.classList.add('app-active');
+                document.getElementById('intro-overlay').style.display = 'none';
+                switchView('home');
+            } else {
+                const tl = gsap.timeline();
+                tl.to("#door-left", { x: "-100%", duration: 1.5, ease: "power4.inOut", delay: 0.5 })
+                  .to("#door-right", { x: "100%", duration: 1.5, ease: "power4.inOut" }, "<")
+                  .to("#intro-overlay", { display: "none" })
+                  .to(".login-img-anim", { scale: 1, duration: 2, ease: "power2.out" }, "-=1.5")
+                  .to(".login-content-anim", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=1");
+            }
+            createSnowflakes(); createMarquee(); renderFilters();
+        });
 
         function switchView(viewName) {
             window.scrollTo({ top: 0, behavior: 'auto' });
             ['home-view', 'shop-view', 'profile-view', 'cart-view', 'wishlist-view', 'checkout-view'].forEach(id => {
-                document.getElementById(id).classList.add('section-hidden');
-                document.getElementById(id).classList.remove('section-active');
+                const el = document.getElementById(id);
+                if(el) { el.classList.add('section-hidden'); el.classList.remove('section-active'); }
             });
-            document.getElementById(viewName + '-view').classList.remove('section-hidden');
-            document.getElementById(viewName + '-view').classList.add('section-active');
+            const target = document.getElementById(viewName + '-view');
+            if(target) { target.classList.remove('section-hidden'); target.classList.add('section-active'); }
 
             if (viewName === 'home') {
                 document.getElementById('snow-container').style.display = 'block';
@@ -332,7 +352,6 @@
             if (viewName === 'profile') { gsap.fromTo(".profile-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }); }
         }
 
-        // Logic Helpers
         function updateSlide() { sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`; }
         function nextSlide() { currentSlide = (currentSlide < 2) ? currentSlide + 1 : 0; updateSlide(); }
         function prevSlide() { currentSlide = (currentSlide > 0) ? currentSlide - 1 : 2; updateSlide(); }
@@ -376,42 +395,27 @@
         function updateCartBadge() { cartBadge.innerText = cartItems.length; cartBadge.classList.toggle('hidden', cartItems.length===0); document.getElementById('profile-order-count').innerText = cartItems.length; }
         function renderCart() { 
             const c = document.getElementById('cart-items-container'); 
-            if(cartItems.length===0) { c.innerHTML='<p class="text-center py-10">Empty.</p>'; document.getElementById('cart-total').innerText='₹0'; return; }
+            if(cartItems.length===0) { c.innerHTML='<p class="text-center py-10">Empty.</p>'; document.getElementById('cart-total').innerText='₹0'; document.getElementById('checkout-total').innerText='₹0'; document.getElementById('cart-subtotal').innerText='₹0'; return; }
             let t = 0; c.innerHTML = cartItems.map((p,i) => { t+=p.price; return `<div class="flex gap-4 mb-4 border-b pb-4"><img src="${p.img}" class="w-20 h-24 rounded-lg object-cover"><div class="flex-1"><h3>${p.name}</h3><p class="text-sm text-gray-500">${p.brand}</p><p class="font-bold">₹${p.price.toLocaleString()}</p><button onclick="removeFromCart(${i})" class="text-red-500 text-sm mt-2">Remove</button></div></div>`; }).join('');
             document.getElementById('cart-total').innerText = '₹' + t.toLocaleString();
             document.getElementById('cart-subtotal').innerText = '₹' + t.toLocaleString();
             document.getElementById('checkout-total').innerText = '₹' + t.toLocaleString();
+            document.getElementById('modal-total').innerText = '₹' + t.toLocaleString();
         }
 
         // --- CHECKOUT LOGIC ---
         function handleCheckout(e) {
             e.preventDefault();
             if(cartItems.length === 0) { alert("Cart is empty!"); return; }
-            
             const method = document.querySelector('input[name="payment"]:checked').value;
-            
-            if(method === 'COD') {
-                finalizeOrder('COD');
-            } else {
-                openPaymentModal();
-            }
+            if(method === 'COD') { processOrder('COD'); } else { openPaymentModal(); }
         }
 
-        function openPaymentModal() {
-            let total = 0; cartItems.forEach(i => total += i.price);
-            document.getElementById('modal-total').innerText = '₹' + total.toLocaleString();
-            paymentModal.classList.remove('hidden'); paymentModal.classList.add('flex');
-            
-            // Generate Dynamic UPI QR (Using placeholder logic as static example)
-            // Ideally use Razorpay's generated QR here
-            const qrImg = paymentModal.querySelector('img');
-            // Assuming you have 'qrcode.jpg' in the folder. If implementing Razorpay fully, use their modal instead.
-        }
-        function closePaymentModal() { paymentModal.classList.add('hidden'); paymentModal.classList.remove('flex'); }
-        function resetApp() { successModal.classList.add('hidden'); successModal.classList.remove('flex'); switchView('home'); }
+        function openPaymentModal() { paymentModal.classList.remove('hidden'); paymentModal.classList.add('flex'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+        function resetApp() { closeModal('success-modal'); switchView('home'); }
 
-        async function finalizeOrder(method) {
-            // Get Form Data
+        async function processOrder(method) {
             const fname = document.getElementById('checkout-fname').value;
             const lname = document.getElementById('checkout-lname').value;
             const address = document.getElementById('checkout-address').value;
@@ -420,7 +424,6 @@
             const phone = document.getElementById('checkout-phone').value;
             let total = 0; cartItems.forEach(i => total += i.price);
 
-            // Construct Order
             const orderData = {
                 userId: window.auth.currentUser ? window.auth.currentUser.uid : "guest",
                 customer: { firstName: fname, lastName: lname, address: address, city: city, zip: zip, phone: phone },
@@ -432,16 +435,15 @@
             };
 
             try {
-                // Save to Firebase
                 await window.addDoc(window.collection(window.db, "orders"), orderData);
-                
-                // Show Success
-                closePaymentModal();
+                closeModal('payment-modal');
                 cartItems = []; updateCartBadge(); renderCart();
-                document.getElementById('payment-method-display').innerText = method === 'Online' ? 'PAID ONLINE' : 'CASH ON DELIVERY';
                 successModal.classList.remove('hidden'); successModal.classList.add('flex');
             } catch (error) { alert("Error: " + error.message); }
         }
+        
+        // Alias for modal button
+        function finalizeOrder() { processOrder('Online'); }
     </script>
 </body>
 </html>
