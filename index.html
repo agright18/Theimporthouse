@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
         tailwind.config = {
@@ -33,61 +34,39 @@
         .section-hidden { display: none !important; }
         .section-active { display: block !important; }
 
-        /* --- SNOWFALL (FIXED Z-INDEX) --- */
-        #snow-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; /* Crucial: Lets you click buttons through the snow */
-            z-index: 50; /* Increased to 50 so it sits ABOVE the home text */
-            display: none; 
-        }
-        .snowflake {
-            position: absolute; top: -10px; background: #cbd5e1;
-            border-radius: 50%; opacity: 0.9; animation: fall linear infinite;
-        }
-        @keyframes fall {
-            0% { transform: translateY(-10px) translateX(0px); opacity: 0.9; }
-            100% { transform: translateY(100vh) translateX(20px); opacity: 0; }
-        }
+        /* --- SUCCESS TICK ANIMATION --- */
+        .checkmark-circle { width: 80px; height: 80px; position: relative; display: inline-block; vertical-align: top; margin-bottom: 20px; }
+        .checkmark-circle .background { width: 80px; height: 80px; border-radius: 50%; background: #22c55e; position: absolute; }
+        .checkmark-circle .checkmark { border-radius: 5px; }
+        .checkmark-circle .checkmark.draw:after { animation-delay: 100ms; animation-duration: 1s; animation-timing-function: ease; animation-name: checkmark; transform: scaleX(-1) rotate(135deg); animation-fill-mode: forwards; }
+        .checkmark-circle .checkmark:after { opacity: 1; height: 40px; width: 20px; transform-origin: left top; border-right: 4px solid white; border-top: 4px solid white; content: ''; left: 22px; top: 40px; position: absolute; }
+        @keyframes checkmark { 0% { height: 0; width: 0; opacity: 1; } 20% { height: 0; width: 20px; opacity: 1; } 40% { height: 40px; width: 20px; opacity: 1; } 100% { height: 40px; width: 20px; opacity: 1; transform: scaleX(-1) rotate(135deg); } }
+
+        /* --- SNOWFALL --- */
+        #snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; display: none; }
+        .snowflake { position: absolute; top: -10px; background: #cbd5e1; border-radius: 50%; opacity: 0.9; animation: fall linear infinite; }
+        @keyframes fall { 0% { transform: translateY(-10px) translateX(0px); opacity: 0.9; } 100% { transform: translateY(100vh) translateX(20px); opacity: 0; } }
 
         /* --- MARQUEE --- */
-        .marquee-container {
-            overflow: hidden; white-space: nowrap; width: 100%;
-            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-        }
+        .marquee-container { overflow: hidden; white-space: nowrap; width: 100%; mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
         .marquee-track { display: inline-flex; gap: 1rem; animation: scroll 20s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        
-        .marquee-item {
-            width: 120px; height: 160px; border-radius: 0.75rem;
-            overflow: hidden; background: #f3f4f6; flex-shrink: 0; position: relative;
-        }
-        @media (min-width: 768px) {
-            .marquee-item { width: 150px; height: 200px; }
-        }
+        .marquee-item { width: 120px; height: 160px; border-radius: 0.75rem; overflow: hidden; background: #f3f4f6; flex-shrink: 0; position: relative; }
+        @media (min-width: 768px) { .marquee-item { width: 150px; height: 200px; } }
         .marquee-item img { width: 100%; height: 100%; object-fit: cover; }
 
         /* --- SLIDER --- */
-        .slider-wrapper {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1); z-index: 0; 
-        }
+        .slider-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1); z-index: 0; }
         .slide { min-width: 100%; height: 100%; position: relative; }
         .slide img { width: 100%; height: 100%; object-fit: cover; }
         .slide::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
 
         /* Animation for Modal */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.3s ease-out forwards; }
-
-        /* Nav Item Animation */
+        
         .nav-item { position: relative; cursor: pointer; }
-        .nav-item::after {
-            content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0;
-            background-color: black; transition: width 0.3s ease-out;
-        }
+        .nav-item::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: black; transition: width 0.3s ease-out; }
         .nav-item:hover::after { width: 100%; }
     </style>
 </head>
@@ -102,42 +81,22 @@
     </div>
 
     <div id="slider-controls" class="fixed inset-0 z-10 pointer-events-none flex items-center justify-between px-2 md:px-4">
-        <button onclick="prevSlide()" class="pointer-events-auto w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition">
-            <i class="ph ph-caret-left text-xl md:text-2xl"></i>
-        </button>
-        <button onclick="nextSlide()" class="pointer-events-auto w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition">
-            <i class="ph ph-caret-right text-xl md:text-2xl"></i>
-        </button>
+        <button onclick="prevSlide()" class="pointer-events-auto w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition"><i class="ph ph-caret-left text-xl md:text-2xl"></i></button>
+        <button onclick="nextSlide()" class="pointer-events-auto w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition"><i class="ph ph-caret-right text-xl md:text-2xl"></i></button>
     </div>
 
     <div id="intro-overlay" class="fixed inset-0 z-[200] flex pointer-events-none">
-        <div id="door-left" class="w-1/2 h-full bg-black flex items-center justify-end border-r border-gray-800 relative z-20">
-            <span class="text-white text-3xl md:text-6xl font-black tracking-tighter mr-2 md:mr-4">IMPORT</span>
-        </div>
-        <div id="door-right" class="w-1/2 h-full bg-black flex items-center justify-start relative z-20">
-            <span class="text-white text-3xl md:text-6xl font-black tracking-tighter ml-2 md:ml-4">HOUSE</span>
-        </div>
+        <div id="door-left" class="w-1/2 h-full bg-black flex items-center justify-end border-r border-gray-800 relative z-20"><span class="text-white text-3xl md:text-6xl font-black tracking-tighter mr-2 md:mr-4">IMPORT</span></div>
+        <div id="door-right" class="w-1/2 h-full bg-black flex items-center justify-start relative z-20"><span class="text-white text-3xl md:text-6xl font-black tracking-tighter ml-2 md:ml-4">HOUSE</span></div>
     </div>
 
-    <div id="payment-modal" class="fixed inset-0 z-[300] bg-black/90 hidden items-center justify-center px-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center relative animate-fade-in-up">
-            <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-gray-400 hover:text-black">
-                <i class="ph ph-x text-2xl"></i>
-            </button>
-            
-            <h2 class="text-2xl font-black mb-1">Scan to Pay</h2>
-            <p class="text-gray-500 text-sm mb-6">Total Amount: <span id="modal-total" class="font-bold text-black text-lg">₹0</span></p>
-            
-            <div class="bg-gray-100 p-4 rounded-2xl mb-6 mx-auto w-64 h-64 flex items-center justify-center">
-                <img src="qrcode.jpg" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=YOUR_UPI_ID&pn=ImportHouse&mc=0000&tid=123456&tr=123456&tn=Payment%20for%20Import%20House&am=0&cu=INR'" 
-                     alt="Payment QR Code" class="w-full h-full object-contain mix-blend-multiply">
-            </div>
-
-            <p class="text-xs text-gray-400 mb-4">Accepting GPay, Paytm, PhonePe & UPI</p>
-
-            <button id="confirm-btn" onclick="finalizeOrder()" class="w-full bg-green-600 text-white font-bold py-4 rounded-full hover:bg-green-700 transition flex items-center justify-center gap-2">
-                <i class="ph ph-check-circle text-xl"></i> Confirm Payment & Place Order
-            </button>
+    <div id="success-modal" class="fixed inset-0 z-[300] bg-black/90 hidden items-center justify-center px-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center relative animate-fade-in-up">
+            <div class="checkmark-circle"><div class="background"></div><div class="checkmark draw"></div></div>
+            <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
+            <p class="text-gray-500 text-sm mb-6">Thank you for shopping with Import House. Your order has been placed.</p>
+            <p id="payment-method-display" class="text-xs font-bold text-blue-600 mb-6 uppercase tracking-wider"></p>
+            <button onclick="resetApp()" class="w-full bg-black text-white font-bold py-3 rounded-full">Continue Shopping</button>
         </div>
     </div>
 
@@ -145,10 +104,7 @@
         <div class="hidden lg:block w-1/2 h-full relative overflow-hidden bg-gray-100">
             <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80" class="w-full h-full object-cover scale-110 login-img-anim">
             <div class="absolute inset-0 bg-black/20"></div>
-            <div class="absolute bottom-10 left-10 text-white">
-                <h2 class="text-4xl font-black tracking-tighter">PREMIUM.</h2>
-                <h2 class="text-4xl font-black tracking-tighter">GLOBAL.</h2>
-            </div>
+            <div class="absolute bottom-10 left-10 text-white"><h2 class="text-4xl font-black tracking-tighter">PREMIUM.</h2><h2 class="text-4xl font-black tracking-tighter">GLOBAL.</h2></div>
         </div>
         <div class="w-full lg:w-1/2 h-full relative">
             <div id="login-form" class="absolute inset-0 flex items-center justify-center p-6 bg-white transition-opacity duration-500">
@@ -184,21 +140,12 @@
         
         <nav id="navbar" class="fixed top-0 w-full z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
             <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex justify-between items-center">
-                <div onclick="switchView('home')" class="cursor-pointer flex items-center gap-2 group">
-                    <img src="theimporthouse.webp" class="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" alt="Import House">
-                </div>
-                <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-500">
-                    <button onclick="switchView('home')" class="nav-item hover:text-black transition">Home</button>
-                    <button onclick="switchView('shop')" class="nav-item hover:text-black transition">Shop</button>
-                    <button onclick="switchView('wishlist')" class="nav-item hover:text-black transition">Wishlist</button>
-                </div>
+                <div onclick="switchView('home')" class="cursor-pointer flex items-center gap-2 group"><img src="theimporthouse.webp" class="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" alt="Import House"></div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-500"><button onclick="switchView('home')" class="nav-item hover:text-black transition">Home</button><button onclick="switchView('shop')" class="nav-item hover:text-black transition">Shop</button><button onclick="switchView('wishlist')" class="nav-item hover:text-black transition">Wishlist</button></div>
                 <div class="flex items-center space-x-4 md:space-x-6">
                     <button onclick="switchView('shop')" class="md:hidden text-gray-600 hover:text-blue-600"><i class="ph ph-storefront text-xl"></i></button>
                     <i onclick="switchView('profile')" class="ph ph-user text-xl cursor-pointer hover:text-blue-600 transition"></i>
-                    <div class="relative cursor-pointer group" onclick="switchView('cart')">
-                        <i class="ph ph-shopping-bag text-xl hover:text-blue-600 transition"></i>
-                        <span id="cart-badge" class="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
-                    </div>
+                    <div class="relative cursor-pointer group" onclick="switchView('cart')"><i class="ph ph-shopping-bag text-xl hover:text-blue-600 transition"></i><span id="cart-badge" class="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span></div>
                 </div>
             </div>
         </nav>
@@ -206,93 +153,64 @@
         <section id="home-view" class="section-active min-h-[100dvh] relative flex flex-col pt-24 md:pt-40 pb-4 z-20 justify-between">
             <div class="h-1 md:h-10"></div>
             <div class="flex-1 flex flex-col justify-center items-center text-center px-4 md:px-6">
-                <div class="hero-anim inline-block mb-3 md:mb-4 px-3 md:px-4 py-1.5 rounded-full border border-white/30 bg-black/30 backdrop-blur-md text-[10px] md:text-xs font-bold uppercase tracking-widest text-white opacity-0 translate-y-4">
-                    Winter Collection 2025
-                </div>
-                <h1 class="hero-anim text-5xl md:text-8xl font-black tracking-tighter mb-4 md:mb-6 leading-[0.9] opacity-0 translate-y-4 text-white drop-shadow-2xl">
-                    DESIGN YOUR <br/> AESTHETIC.
-                </h1>
-                <button onclick="switchView('shop')" class="hero-anim bg-white text-black px-8 md:px-10 py-3 md:py-4 rounded-full font-bold text-base md:text-lg flex items-center gap-2 mx-auto hover:bg-gray-200 transition shadow-xl opacity-0 translate-y-4 hover:scale-105 active:scale-95 duration-300 mt-4 md:mt-6">
-                    Start Shopping <i class="ph ph-arrow-right"></i>
-                </button>
+                <div class="hero-anim inline-block mb-3 md:mb-4 px-3 md:px-4 py-1.5 rounded-full border border-white/30 bg-black/30 backdrop-blur-md text-[10px] md:text-xs font-bold uppercase tracking-widest text-white opacity-0 translate-y-4">Winter Collection 2025</div>
+                <h1 class="hero-anim text-5xl md:text-8xl font-black tracking-tighter mb-4 md:mb-6 leading-[0.9] opacity-0 translate-y-4 text-white drop-shadow-2xl">DESIGN YOUR <br/> AESTHETIC.</h1>
+                <button onclick="switchView('shop')" class="hero-anim bg-white text-black px-8 md:px-10 py-3 md:py-4 rounded-full font-bold text-base md:text-lg flex items-center gap-2 mx-auto hover:bg-gray-200 transition shadow-xl opacity-0 translate-y-4 hover:scale-105 active:scale-95 duration-300 mt-4 md:mt-6">Start Shopping <i class="ph ph-arrow-right"></i></button>
             </div>
-            <div class="w-full mt-6 md:mt-10 pb-6 flex-shrink-0">
-                <div class="marquee-container opacity-0 hero-anim translate-y-4">
-                    <div class="marquee-track" id="marquee-track"></div>
-                </div>
-            </div>
+            <div class="w-full mt-6 md:mt-10 pb-6 flex-shrink-0"><div class="marquee-container opacity-0 hero-anim translate-y-4"><div class="marquee-track" id="marquee-track"></div></div></div>
         </section>
 
         <section id="shop-view" class="section-hidden min-h-screen pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto bg-white relative z-40">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-8">
-                <div><h2 class="text-3xl md:text-4xl font-black mb-2">The Collection</h2><p class="text-gray-500">Exclusive drops.</p></div>
-                <div class="flex gap-2 overflow-x-auto mt-4 md:mt-0 pb-2 md:pb-0 w-full md:w-auto" id="brand-filters"></div>
-            </div>
-            <div class="mb-8 md:mb-10 relative max-w-md">
-                <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Search..." class="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:border-black outline-none transition bg-gray-50 focus:bg-white text-sm font-medium">
-            </div>
+            <div class="flex flex-col md:flex-row justify-between items-end mb-8"><div><h2 class="text-3xl md:text-4xl font-black mb-2">The Collection</h2><p class="text-gray-500">Exclusive drops.</p></div><div class="flex gap-2 overflow-x-auto mt-4 md:mt-0 pb-2 md:pb-0 w-full md:w-auto" id="brand-filters"></div></div>
+            <div class="mb-8 md:mb-10 relative max-w-md"><i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i><input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Search..." class="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:border-black outline-none transition bg-gray-50 focus:bg-white text-sm font-medium"></div>
             <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10"></div>
         </section>
 
         <section id="wishlist-view" class="section-hidden min-h-screen pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto bg-white relative z-40">
-            <div class="flex justify-between items-end mb-8 md:mb-12">
-                <div><h2 class="text-3xl md:text-4xl font-black mb-2">My Wishlist</h2><p class="text-gray-500">Your curated favorite items.</p></div>
-            </div>
+            <div class="flex justify-between items-end mb-8 md:mb-12"><div><h2 class="text-3xl md:text-4xl font-black mb-2">My Wishlist</h2><p class="text-gray-500">Your curated favorite items.</p></div></div>
             <div id="wishlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10"></div>
         </section>
 
         <section id="cart-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
-            <button onclick="switchView('shop')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition">
-                <i class="ph ph-arrow-left text-lg"></i> Back to Shop
-            </button>
+            <button onclick="switchView('shop')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Shop</button>
             <h2 class="text-3xl md:text-4xl font-black mb-8">Your Bag</h2>
-            <div class="flex flex-col lg:flex-row gap-8 md:gap-12">
-                <div class="flex-1" id="cart-items-container">
-                    <p class="text-gray-500 text-center py-10">Your cart is empty.</p>
-                </div>
-                <div class="w-full lg:w-80 h-fit bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                    <h3 class="text-xl font-bold mb-4">Summary</h3>
-                    <div class="flex justify-between mb-2 text-gray-500"><span>Subtotal</span> <span id="cart-subtotal">₹0</span></div>
-                    <div class="flex justify-between mb-4 text-gray-500"><span>Shipping</span> <span>Free</span></div>
-                    <div class="border-t pt-4 flex justify-between font-black text-lg mb-6"><span>Total</span> <span id="cart-total">₹0</span></div>
-                    <button onclick="switchView('checkout')" class="w-full bg-black text-white font-bold py-3 rounded-full hover:bg-gray-800 transition">Proceed to Checkout</button>
-                </div>
-            </div>
+            <div class="flex flex-col lg:flex-row gap-8 md:gap-12"><div class="flex-1" id="cart-items-container"><p class="text-gray-500 text-center py-10">Your cart is empty.</p></div><div class="w-full lg:w-80 h-fit bg-gray-50 p-6 rounded-2xl border border-gray-100"><h3 class="text-xl font-bold mb-4">Summary</h3><div class="flex justify-between mb-2 text-gray-500"><span>Subtotal</span> <span id="cart-subtotal">₹0</span></div><div class="flex justify-between mb-4 text-gray-500"><span>Shipping</span> <span>Free</span></div><div class="border-t pt-4 flex justify-between font-black text-lg mb-6"><span>Total</span> <span id="cart-total">₹0</span></div><button onclick="switchView('checkout')" class="w-full bg-black text-white font-bold py-3 rounded-full hover:bg-gray-800 transition">Proceed to Checkout</button></div></div>
         </section>
 
         <section id="checkout-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-2xl mx-auto pb-20 bg-white relative z-40">
-            <button onclick="switchView('cart')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition">
-                <i class="ph ph-arrow-left text-lg"></i> Back to Cart
-            </button>
+            <button onclick="switchView('cart')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Cart</button>
             <h2 class="text-3xl font-black mb-2">Secure Checkout</h2>
             <p class="text-gray-500 mb-8">Enter your details.</p>
-            
-            <form onsubmit="openPaymentModal(event)" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-bold mb-1">First Name</label><input id="checkout-fname" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div>
-                    <div><label class="block text-sm font-bold mb-1">Last Name</label><input id="checkout-lname" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div>
-                </div>
+            <form onsubmit="handleCheckout(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold mb-1">First Name</label><input id="checkout-fname" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div><div><label class="block text-sm font-bold mb-1">Last Name</label><input id="checkout-lname" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div></div>
                 <div><label class="block text-sm font-bold mb-1">Address</label><input id="checkout-address" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black" placeholder="Street address"></div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-bold mb-1">City</label><input id="checkout-city" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div>
-                    <div><label class="block text-sm font-bold mb-1">Pincode</label><input id="checkout-zip" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div>
-                </div>
+                <div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold mb-1">City</label><input id="checkout-city" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div><div><label class="block text-sm font-bold mb-1">Pincode</label><input id="checkout-zip" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div></div>
                 <div><label class="block text-sm font-bold mb-1">Phone</label><input id="checkout-phone" required type="tel" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div>
                 
-                <div class="pt-6 border-t mt-6">
-                    <div class="flex justify-between font-black text-xl mb-6"><span>Total</span> <span id="checkout-total">₹0</span></div>
-                    <button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-full hover:bg-gray-800 transition">Proceed to Payment</button>
+                <div class="pt-4 mt-6 border-t">
+                    <p class="font-bold text-sm mb-3">Payment Method</p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-black transition bg-gray-50">
+                            <input type="radio" name="payment" value="Online" checked class="mr-3 accent-black w-4 h-4">
+                            <div class="flex-1"><span class="font-bold block text-sm">Online Payment (UPI/Cards)</span><span class="text-xs text-gray-500">Scan QR Code</span></div>
+                            <i class="ph ph-qr-code text-xl"></i>
+                        </label>
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-black transition bg-gray-50">
+                            <input type="radio" name="payment" value="COD" class="mr-3 accent-black w-4 h-4">
+                            <div class="flex-1"><span class="font-bold block text-sm">Cash on Delivery</span><span class="text-xs text-gray-500">Pay upon receipt</span></div>
+                            <i class="ph ph-money text-xl"></i>
+                        </label>
+                    </div>
                 </div>
+
+                <div class="pt-6 border-t mt-6"><div class="flex justify-between font-black text-xl mb-6"><span>Total</span> <span id="checkout-total">₹0</span></div><button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-full hover:bg-gray-800 transition">Place Order</button></div>
             </form>
         </section>
 
         <section id="profile-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
-            <button onclick="switchView('home')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition">
-                <i class="ph ph-arrow-left text-lg"></i> Back to Home
-            </button>
-            <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900"><img src="banner.jpg?auto=format&fit=crop&w=1600&q=80" class="w-full h-full object-cover opacity-80"></div>
+            <button onclick="switchView('home')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Home</button>
+            <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden opacity-0 translate-y-4">
+                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900"><img src="image_7a93df.jpg" class="w-full h-full object-cover opacity-80"></div>
                 <div class="px-6 md:px-8 pb-8 relative">
                     <div class="absolute -top-10 md:-top-12 left-6 md:left-8 w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white p-1 shadow-lg"><div class="w-full h-full bg-black text-white rounded-xl flex items-center justify-center text-3xl md:text-4xl font-black"><span id="user-initial">G</span></div></div>
                     <div class="pt-12 md:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center"><div><h2 id="display-name" class="text-2xl font-black text-gray-900">Guest User</h2><p class="text-gray-500 text-sm">Joined 2025</p></div><button onclick="logout()" class="mt-4 md:mt-0 px-6 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition flex items-center gap-2 text-sm md:text-base"><i class="ph ph-sign-out"></i> Sign Out</button></div>
@@ -303,10 +221,7 @@
 
         <footer id="footer" class="bg-black text-white py-12 md:py-16 border-t border-gray-900 relative z-50">
             <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center gap-2 mb-4"><img src="theimporthouse.webp" class="h-10 md:h-12 w-auto object-contain" alt="Import House"></div>
-                    <p class="text-gray-400 max-w-xs mb-6 text-sm">Premium streetwear and luxury fashion.</p>
-                </div>
+                <div class="col-span-1 md:col-span-2"><div class="flex items-center gap-2 mb-4"><img src="theimporthouse.webp" class="h-10 md:h-12 w-auto object-contain" alt="Import House"></div><p class="text-gray-400 max-w-xs mb-6 text-sm">Premium streetwear and luxury fashion.</p></div>
                 <div class="hidden md:block"><h3 class="font-bold mb-4">Discover</h3><ul class="space-y-3 text-gray-400 text-sm"><li><a href="#" onclick="switchView('shop')" class="hover:text-white">New Arrivals</a></li><li><a href="#" onclick="switchView('shop')" class="hover:text-white">Brands</a></li></ul></div>
             </div>
             <div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-gray-900 text-gray-500 text-xs flex justify-between"><p>&copy; 2025 Import House Inc.</p></div>
@@ -320,7 +235,7 @@
 
         // --- ⚠️ PASTE YOUR REAL KEYS HERE ⚠️ ---
         const firebaseConfig = {
-           apiKey: "AIzaSyAVAhzIDoiFiGxHN0z2ze9TSocB3Cbb6i8",
+            apiKey: "AIzaSyAVAhzIDoiFiGxHN0z2ze9TSocB3Cbb6i8",
   authDomain: "shop-clothes-aded9.firebaseapp.com",
   projectId: "shop-clothes-aded9",
   storageBucket: "shop-clothes-aded9.firebasestorage.app",
@@ -331,12 +246,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        window.auth = auth;
-        window.db = db;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.serverTimestamp = serverTimestamp;
+        window.auth = auth; window.db = db; window.collection = collection; window.addDoc = addDoc; window.serverTimestamp = serverTimestamp;
 
         window.handleSignup = async (e) => {
             e.preventDefault();
@@ -378,10 +288,8 @@
     </script>
 
     <script>
-        let cartItems = [];
-        let wishlistItems = [];
-        let currentSlide = 0;
-        let currentBrand = 'All';
+        let currentUser = { name: "Guest", surname: "User" };
+        let cartItems = []; let wishlistItems = []; let currentSlide = 0; let currentBrand = 'All';
 
         const products = [
             { id: 1, name: 'Tech Fleece Hoodie', brand: 'Nike', price: 4999, img: 'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?auto=format&fit=crop&w=800&q=80' },
@@ -393,58 +301,13 @@
         ];
         const brands = ['All', 'Nike', 'Adidas', 'Levis', 'Puma', 'Zara'];
 
-        // Elements
         const cartBadge = document.getElementById('cart-badge');
-        const cartItemsContainer = document.getElementById('cart-items-container');
         const sliderTrack = document.getElementById('slider-track');
         const paymentModal = document.getElementById('payment-modal');
+        const successModal = document.getElementById('success-modal');
 
-        window.addEventListener('load', () => {
-            renderFilters();
-            createMarquee();
-            
-            // Initial animation only runs if not auto-logged in by Firebase
-            setTimeout(() => {
-                if(!document.body.classList.contains('app-active')) {
-                    const tl = gsap.timeline();
-                    tl.to("#door-left", { x: "-100%", duration: 1.5, ease: "power4.inOut", delay: 0.5 })
-                      .to("#door-right", { x: "100%", duration: 1.5, ease: "power4.inOut" }, "<")
-                      .to("#intro-overlay", { display: "none" })
-                      .to(".login-img-anim", { scale: 1, duration: 2, ease: "power2.out" }, "-=1.5")
-                      .to(".login-content-anim", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=1");
-                }
-            }, 500);
-        });
+        window.addEventListener('load', () => { renderFilters(); createMarquee(); createSnowflakes(); });
 
-        // Toggle Auth Forms
-        function toggleAuth(mode) {
-            if(mode === 'signup') { document.getElementById('login-form').style.opacity='0'; document.getElementById('login-form').style.pointerEvents='none'; document.getElementById('signup-form').style.opacity='1'; document.getElementById('signup-form').style.pointerEvents='auto'; }
-            else { document.getElementById('signup-form').style.opacity='0'; document.getElementById('signup-form').style.pointerEvents='none'; document.getElementById('login-form').style.opacity='1'; document.getElementById('login-form').style.pointerEvents='auto'; }
-        }
-
-        // Standard UI Functions
-        function updateSlide() { sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`; }
-        function nextSlide() { currentSlide = (currentSlide < 2) ? currentSlide + 1 : 0; updateSlide(); }
-        function prevSlide() { currentSlide = (currentSlide > 0) ? currentSlide - 1 : 2; updateSlide(); }
-
-        function createSnowflakes() {
-            const snowContainer = document.getElementById('snow-container');
-            snowContainer.innerHTML = '';
-            for (let i = 0; i < 50; i++) {
-                const flake = document.createElement('div');
-                flake.classList.add('snowflake');
-                const size = Math.random() * 5 + 2 + 'px';
-                flake.style.width = size; flake.style.height = size;
-                flake.style.left = Math.random() * 100 + 'vw';
-                flake.style.animationDuration = Math.random() * 3 + 2 + 's';
-                flake.style.animationDelay = Math.random() * 2 + 's';
-                snowContainer.appendChild(flake);
-            }
-        }
-        function createMarquee() {
-            const loopProducts = [...products, ...products, ...products];
-            document.getElementById('marquee-track').innerHTML = loopProducts.map(p => `<div class="marquee-item"><img src="${p.img}" alt="${p.name}"></div>`).join('');
-        }
         function switchView(viewName) {
             window.scrollTo({ top: 0, behavior: 'auto' });
             ['home-view', 'shop-view', 'profile-view', 'cart-view', 'wishlist-view', 'checkout-view'].forEach(id => {
@@ -457,7 +320,6 @@
             if (viewName === 'home') {
                 document.getElementById('snow-container').style.display = 'block';
                 document.getElementById('slider-controls').style.display = 'flex';
-                // Footer is VISIBLE on home
                 gsap.fromTo(".hero-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6 });
             } else {
                 document.getElementById('snow-container').style.display = 'none';
@@ -470,118 +332,115 @@
             if (viewName === 'profile') { gsap.fromTo(".profile-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }); }
         }
 
-        // --- Shop Logic ---
+        // Logic Helpers
+        function updateSlide() { sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`; }
+        function nextSlide() { currentSlide = (currentSlide < 2) ? currentSlide + 1 : 0; updateSlide(); }
+        function prevSlide() { currentSlide = (currentSlide > 0) ? currentSlide - 1 : 2; updateSlide(); }
+        function createSnowflakes() {
+            const sc = document.getElementById('snow-container'); sc.innerHTML = '';
+            for (let i = 0; i < 50; i++) {
+                const f = document.createElement('div'); f.className = 'snowflake';
+                f.style.width = Math.random()*5+2+'px'; f.style.height=f.style.width; f.style.left=Math.random()*100+'vw';
+                f.style.animationDuration=Math.random()*3+2+'s'; sc.appendChild(f);
+            }
+        }
+        function createMarquee() {
+            const lp = [...products, ...products];
+            document.getElementById('marquee-track').innerHTML = lp.map(p => `<div class="marquee-item"><img src="${p.img}" alt="${p.name}"></div>`).join('');
+        }
+        function toggleAuth(mode) {
+            const l = document.getElementById('login-form'), s = document.getElementById('signup-form');
+            if(mode === 'signup') { l.style.opacity='0'; l.style.pointerEvents='none'; s.style.opacity='1'; s.style.pointerEvents='auto'; }
+            else { s.style.opacity='0'; s.style.pointerEvents='none'; l.style.opacity='1'; l.style.pointerEvents='auto'; }
+        }
         function renderFilters() {
             if(document.getElementById('brand-filters').innerHTML !== "") return;
-            document.getElementById('brand-filters').innerHTML = brands.map(brand => `<button onclick="filterBrand('${brand}', this)" class="filter-btn px-6 py-2 rounded-full text-sm font-bold transition whitespace-nowrap ${brand === 'All' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">${brand}</button>`).join('');
+            document.getElementById('brand-filters').innerHTML = brands.map(b => `<button onclick="filterBrand('${b}', this)" class="filter-btn px-6 py-2 rounded-full text-sm font-bold transition whitespace-nowrap ${b==='All'?'bg-black text-white':'bg-gray-100 text-gray-600'}">${b}</button>`).join('');
         }
+        function filterBrand(b, btn) { document.querySelectorAll('.filter-btn').forEach(el=>el.className=el.className.replace('bg-black text-white','bg-gray-100 text-gray-600')); btn.className=btn.className.replace('bg-gray-100 text-gray-600','bg-black text-white'); renderProducts(b); }
         function handleSearch() { renderProducts(currentBrand); }
-        function filterBrand(brand, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.className = b.className.replace('bg-black text-white', 'bg-gray-100 text-gray-600'));
-            btn.className = btn.className.replace('bg-gray-100 text-gray-600', 'bg-black text-white');
-            renderProducts(brand);
-        }
         function renderProducts(brand) {
-            currentBrand = brand;
-            const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || '';
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
-            const filtered = products.filter(p => { return (brand === 'All' || p.brand === brand) && p.name.toLowerCase().includes(searchTerm); });
-            if (filtered.length === 0) { grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No products found.</p>'; return; }
-            filtered.forEach((product, index) => {
-                const isWishlisted = wishlistItems.some(i => i.id === product.id);
+            currentBrand = brand; const term = document.getElementById('search-input')?.value.toLowerCase() || ''; const grid = document.getElementById('product-grid'); grid.innerHTML = '';
+            const filtered = products.filter(p => (brand === 'All' || p.brand === brand) && p.name.toLowerCase().includes(term));
+            if (filtered.length === 0) { grid.innerHTML = '<p class="col-span-3 text-center py-10">No products.</p>'; return; }
+            filtered.forEach((p, i) => {
                 const card = document.createElement('div'); card.className = "group opacity-0 translate-y-4";
-                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4 cursor-pointer"><img src="${product.img}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"><div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div><div class="absolute top-4 left-4 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">${product.brand}</div><button onclick="toggleWishlist(${product.id}, this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/50 backdrop-blur-md flex items-center justify-center hover:bg-white transition z-10"><i class="ph ${isWishlisted ? 'ph-heart-fill text-red-500' : 'ph-heart'} text-lg"></i></button><button onclick="addToCart(${product.id})" class="absolute bottom-4 right-4 bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-300 hover:bg-black hover:text-white"><i class="ph ph-plus text-lg"></i></button></div><h3 class="text-lg font-bold">${product.name}</h3><p class="text-gray-500">₹${product.price.toLocaleString()}</p>`;
-                grid.appendChild(card);
-                gsap.to(card, { opacity: 1, y: 0, duration: 0.4, delay: index * 0.05 });
+                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4 cursor-pointer"><img src="${p.img}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"><div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div><div class="absolute top-4 left-4 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">${p.brand}</div><button onclick="toggleWishlist(${p.id}, this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-md"><i class="ph ${wishlistItems.some(x=>x.id===p.id)?'ph-heart-fill text-red-500':'ph-heart'} text-lg"></i></button><button onclick="addToCart(${p.id})" class="absolute bottom-4 right-4 bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg"><i class="ph ph-plus text-lg"></i></button></div><h3 class="text-lg font-bold">${p.name}</h3><p class="text-gray-500">₹${p.price.toLocaleString()}</p>`;
+                grid.appendChild(card); gsap.to(card, { opacity: 1, y: 0, duration: 0.4, delay: i * 0.05 });
             });
         }
-
-        function toggleWishlist(id, btn) {
-            const product = products.find(p => p.id === id);
-            const index = wishlistItems.findIndex(i => i.id === id);
-            if (index > -1) { wishlistItems.splice(index, 1); btn.querySelector('i').className = "ph ph-heart text-lg"; } 
-            else { wishlistItems.push(product); btn.querySelector('i').className = "ph ph-heart-fill text-red-500 text-lg"; }
-            document.getElementById('profile-wishlist-count').innerText = wishlistItems.length;
-        }
-        function renderWishlist() {
-            const grid = document.getElementById('wishlist-grid');
-            grid.innerHTML = '';
-            if (wishlistItems.length === 0) { grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">Your wishlist is empty.</p>'; return; }
-            wishlistItems.forEach((product) => {
-                const card = document.createElement('div'); card.className = "group";
-                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4"><img src="${product.img}" class="w-full h-full object-cover"></div><h3 class="text-lg font-bold">${product.name}</h3><p class="text-gray-500">₹${product.price.toLocaleString()}</p>`;
-                grid.appendChild(card);
-            });
+        function toggleWishlist(id, btn) { const p = products.find(x=>x.id===id); const i = wishlistItems.findIndex(x=>x.id===id); if(i>-1) { wishlistItems.splice(i,1); btn.querySelector('i').className="ph ph-heart text-lg"; } else { wishlistItems.push(p); btn.querySelector('i').className="ph ph-heart-fill text-red-500 text-lg"; } document.getElementById('profile-wishlist-count').innerText = wishlistItems.length; }
+        function renderWishlist() { const g = document.getElementById('wishlist-grid'); g.innerHTML=''; wishlistItems.forEach(p => { g.innerHTML += `<div class="group"><div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4"><img src="${p.img}" class="w-full h-full object-cover"></div><h3 class="font-bold">${p.name}</h3><p>₹${p.price.toLocaleString()}</p></div>`; }); }
+        function addToCart(id) { cartItems.push(products.find(p=>p.id===id)); updateCartBadge(); alert('Added to bag'); }
+        function removeFromCart(i) { cartItems.splice(i,1); updateCartBadge(); renderCart(); }
+        function updateCartBadge() { cartBadge.innerText = cartItems.length; cartBadge.classList.toggle('hidden', cartItems.length===0); document.getElementById('profile-order-count').innerText = cartItems.length; }
+        function renderCart() { 
+            const c = document.getElementById('cart-items-container'); 
+            if(cartItems.length===0) { c.innerHTML='<p class="text-center py-10">Empty.</p>'; document.getElementById('cart-total').innerText='₹0'; return; }
+            let t = 0; c.innerHTML = cartItems.map((p,i) => { t+=p.price; return `<div class="flex gap-4 mb-4 border-b pb-4"><img src="${p.img}" class="w-20 h-24 rounded-lg object-cover"><div class="flex-1"><h3>${p.name}</h3><p class="text-sm text-gray-500">${p.brand}</p><p class="font-bold">₹${p.price.toLocaleString()}</p><button onclick="removeFromCart(${i})" class="text-red-500 text-sm mt-2">Remove</button></div></div>`; }).join('');
+            document.getElementById('cart-total').innerText = '₹' + t.toLocaleString();
+            document.getElementById('cart-subtotal').innerText = '₹' + t.toLocaleString();
+            document.getElementById('checkout-total').innerText = '₹' + t.toLocaleString();
         }
 
-        function addToCart(id) { const product = products.find(p => p.id === id); cartItems.push(product); updateCartBadge(); alert(`${product.name} added to bag!`); }
-        function removeFromCart(index) { cartItems.splice(index, 1); updateCartBadge(); renderCart(); }
-        function updateCartBadge() { cartBadge.innerText = cartItems.length; cartBadge.classList.toggle('hidden', cartItems.length === 0); document.getElementById('profile-order-count').innerText = cartItems.length; }
-        
-        function renderCart() {
-            if (cartItems.length === 0) { cartItemsContainer.innerHTML = '<p class="text-gray-500 text-lg">Your bag is currently empty.</p>'; document.getElementById('cart-subtotal').innerText = '₹0'; document.getElementById('cart-total').innerText = '₹0'; return; }
-            let total = 0;
-            cartItemsContainer.innerHTML = cartItems.map((item, index) => {
-                total += item.price;
-                return `<div class="flex gap-4 mb-6 border-b border-gray-100 pb-6"><div class="w-24 h-32 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0"><img src="${item.img}" class="w-full h-full object-cover"></div><div class="flex-1 flex justify-between"><div><h3 class="font-bold text-lg">${item.name}</h3><p class="text-gray-500 text-sm mb-2">${item.brand}</p><p class="font-bold">₹${item.price.toLocaleString()}</p></div><button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 self-start"><i class="ph ph-trash text-xl"></i></button></div></div>`;
-            }).join('');
-            document.getElementById('cart-subtotal').innerText = '₹' + total.toLocaleString();
-            document.getElementById('cart-total').innerText = '₹' + total.toLocaleString();
-            document.getElementById('checkout-total').innerText = '₹' + total.toLocaleString();
-        }
-
-        function openPaymentModal(e) {
+        // --- CHECKOUT LOGIC ---
+        function handleCheckout(e) {
             e.preventDefault();
+            if(cartItems.length === 0) { alert("Cart is empty!"); return; }
+            
+            const method = document.querySelector('input[name="payment"]:checked').value;
+            
+            if(method === 'COD') {
+                finalizeOrder('COD');
+            } else {
+                openPaymentModal();
+            }
+        }
+
+        function openPaymentModal() {
             let total = 0; cartItems.forEach(i => total += i.price);
             document.getElementById('modal-total').innerText = '₹' + total.toLocaleString();
-            paymentModal.classList.remove('hidden');
-            paymentModal.classList.add('flex');
-        }
-
-        function closePaymentModal() {
-            paymentModal.classList.add('hidden');
-            paymentModal.classList.remove('flex');
-        }
-
-        async function finalizeOrder() {
-            const btn = document.querySelector('#payment-modal button:last-child');
-            btn.innerHTML = "Processing Order...";
+            paymentModal.classList.remove('hidden'); paymentModal.classList.add('flex');
             
+            // Generate Dynamic UPI QR (Using placeholder logic as static example)
+            // Ideally use Razorpay's generated QR here
+            const qrImg = paymentModal.querySelector('img');
+            // Assuming you have 'qrcode.jpg' in the folder. If implementing Razorpay fully, use their modal instead.
+        }
+        function closePaymentModal() { paymentModal.classList.add('hidden'); paymentModal.classList.remove('flex'); }
+        function resetApp() { successModal.classList.add('hidden'); successModal.classList.remove('flex'); switchView('home'); }
+
+        async function finalizeOrder(method) {
+            // Get Form Data
             const fname = document.getElementById('checkout-fname').value;
             const lname = document.getElementById('checkout-lname').value;
             const address = document.getElementById('checkout-address').value;
             const city = document.getElementById('checkout-city').value;
             const zip = document.getElementById('checkout-zip').value;
             const phone = document.getElementById('checkout-phone').value;
-            let total = 0;
-            cartItems.forEach(item => total += item.price);
+            let total = 0; cartItems.forEach(i => total += i.price);
 
+            // Construct Order
             const orderData = {
                 userId: window.auth.currentUser ? window.auth.currentUser.uid : "guest",
                 customer: { firstName: fname, lastName: lname, address: address, city: city, zip: zip, phone: phone },
                 items: cartItems,
                 totalAmount: total,
-                paymentStatus: "Paid via QR",
+                paymentStatus: method === 'Online' ? "Paid via QR" : "Pending (COD)",
                 status: "Pending",
                 timestamp: window.serverTimestamp()
             };
 
             try {
+                // Save to Firebase
                 await window.addDoc(window.collection(window.db, "orders"), orderData);
                 
-                alert("✅ Order Placed Successfully! We have received your payment details.");
+                // Show Success
                 closePaymentModal();
-                cartItems = []; 
-                updateCartBadge(); 
-                renderCart(); 
-                switchView('home');
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                alert("Error placing order: " + error.message);
-            } finally {
-                btn.innerHTML = '<i class="ph ph-check-circle text-xl"></i> Confirm Payment & Place Order';
-            }
+                cartItems = []; updateCartBadge(); renderCart();
+                document.getElementById('payment-method-display').innerText = method === 'Online' ? 'PAID ONLINE' : 'CASH ON DELIVERY';
+                successModal.classList.remove('hidden'); successModal.classList.add('flex');
+            } catch (error) { alert("Error: " + error.message); }
         }
     </script>
 </body>
