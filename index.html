@@ -53,6 +53,7 @@
         .marquee-track { display: inline-flex; gap: 1rem; animation: scroll 20s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .marquee-item { width: 120px; height: 160px; border-radius: 0.75rem; overflow: hidden; background: #f3f4f6; flex-shrink: 0; position: relative; }
+        @media (min-width: 768px) { .marquee-item { width: 150px; height: 200px; } }
         .marquee-item img { width: 100%; height: 100%; object-fit: cover; }
 
         /* --- SLIDER --- */
@@ -94,11 +95,11 @@
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center relative animate-fade-in-up">
             <button onclick="closeModal('payment-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-black"><i class="ph ph-x text-2xl"></i></button>
             <h2 class="text-2xl font-black mb-1">Scan to Pay</h2>
-            <p class="text-gray-500 text-sm mb-6">Total: <span id="modal-total" class="font-bold text-black text-lg">₹0</span></p>
+            <p class="text-gray-500 text-sm mb-6">Total Amount: <span id="modal-total" class="font-bold text-black text-lg">₹0</span></p>
             <div class="bg-gray-100 p-4 rounded-2xl mb-6 mx-auto w-64 h-64 flex items-center justify-center">
-                <img src="qrcode.jpg" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=YOUR_UPI_ID'" alt="Payment QR" class="w-full h-full object-contain mix-blend-multiply">
+                <img src="qrcode.jpg" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=YOUR_UPI_ID&pn=ImportHouse&mc=0000&tid=123456&tr=123456&tn=Payment%20for%20Import%20House&am=0&cu=INR'" alt="Payment QR Code" class="w-full h-full object-contain mix-blend-multiply">
             </div>
-            <p class="text-xs text-gray-400 mb-4">GPay • PhonePe • Paytm • UPI</p>
+            <p class="text-xs text-gray-400 mb-4">Accepting GPay, Paytm, PhonePe & UPI</p>
             <button onclick="processOrder('Online')" class="w-full bg-green-600 text-white font-bold py-4 rounded-full hover:bg-green-700 transition">Payment Completed</button>
         </div>
     </div>
@@ -107,7 +108,7 @@
         <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center relative animate-fade-in-up">
             <div class="checkmark-circle"><div class="background"></div><div class="checkmark"></div></div>
             <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
-            <p class="text-gray-500 text-sm mb-6">Thank you for shopping with Import House.</p>
+            <p class="text-gray-500 text-sm mb-6">We have received your order.</p>
             <button onclick="resetApp()" class="w-full bg-black text-white font-bold py-3 rounded-full">Continue Shopping</button>
         </div>
     </div>
@@ -243,7 +244,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         // --- ⚠️ PASTE YOUR REAL KEYS HERE ⚠️ ---
         const firebaseConfig = {
@@ -278,25 +279,38 @@
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            try { 
-                await signInWithEmailAndPassword(auth, email, password);
-                location.reload(); 
-            } catch (error) { alert("Error: " + error.message); }
+            try { await signInWithEmailAndPassword(auth, email, password); location.reload(); } catch (error) { alert("Error: " + error.message); }
         }
 
         window.logout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('importHouseUser'); location.reload(); } }
 
+        // Fetch Real Order Stats
+        async function fetchOrderHistory(uid) {
+            try {
+                const q = query(collection(db, "orders"), where("userId", "==", uid));
+                const snapshot = await getDocs(q);
+                document.getElementById('profile-order-count').innerText = snapshot.size;
+            } catch (e) { console.log(e); }
+        }
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const savedUser = localStorage.getItem('importHouseUser');
-                if(!savedUser) {
-                    const docSnap = await getDoc(doc(db, "users", user.uid));
-                    if (docSnap.exists()) {
-                        const d = docSnap.data();
-                        localStorage.setItem('importHouseUser', JSON.stringify({ name: d.firstName, surname: d.lastName }));
-                        location.reload();
-                    }
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (docSnap.exists()) {
+                    const d = docSnap.data();
+                    const userData = { name: d.firstName, surname: d.lastName };
+                    localStorage.setItem('importHouseUser', JSON.stringify(userData));
+                    document.getElementById('display-name').innerText = `${d.firstName} ${d.lastName}`;
+                    document.getElementById('user-initial').innerText = d.firstName.charAt(0).toUpperCase();
                 }
+                
+                fetchOrderHistory(user.uid);
+
+                document.getElementById('auth-container').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                document.body.classList.add('app-active');
+                if(document.getElementById('intro-overlay')) document.getElementById('intro-overlay').style.display = 'none';
+                if(typeof switchView === 'function') switchView('home');
             }
         });
     </script>
@@ -321,6 +335,10 @@
         const successModal = document.getElementById('success-modal');
 
         window.addEventListener('load', () => {
+            // Load Cart from LocalStorage
+            const storedCart = localStorage.getItem('importHouseCart');
+            if (storedCart) { cartItems = JSON.parse(storedCart); updateCartBadge(); }
+
             const savedUser = localStorage.getItem('importHouseUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
@@ -414,14 +432,15 @@
 
             try {
                 await window.addDoc(window.collection(window.db, "orders"), orderData);
-                cartItems = []; updateCartBadge(); renderCart();
+                cartItems = []; 
+                localStorage.removeItem('importHouseCart'); // Clear storage
+                updateCartBadge(); renderCart();
                 const sModal = document.getElementById('success-modal');
                 if(sModal) { sModal.classList.remove('hidden'); sModal.classList.add('flex'); }
             } catch (error) { alert("Error: " + error.message); }
         }
 
-        // ... (Keep existing Helper Functions: updateSlide, nextSlide, prevSlide, createSnowflakes, createMarquee, renderFilters, handleSearch, renderProducts, filterBrand, toggleWishlist, renderWishlist, addToCart, removeFromCart, updateCartBadge, renderCart) ...
-        
+        // Logic Helpers
         function updateSlide() { sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`; }
         function nextSlide() { currentSlide = (currentSlide < 2) ? currentSlide + 1 : 0; updateSlide(); }
         function prevSlide() { currentSlide = (currentSlide > 0) ? currentSlide - 1 : 2; updateSlide(); }
@@ -455,9 +474,18 @@
         }
         function toggleWishlist(id, btn) { const p = products.find(x=>x.id===id); const i = wishlistItems.findIndex(x=>x.id===id); if(i>-1) { wishlistItems.splice(i,1); btn.querySelector('i').className="ph ph-heart text-lg"; } else { wishlistItems.push(p); btn.querySelector('i').className="ph ph-heart-fill text-red-500 text-lg"; } document.getElementById('profile-wishlist-count').innerText = wishlistItems.length; }
         function renderWishlist() { const g = document.getElementById('wishlist-grid'); g.innerHTML=''; wishlistItems.forEach(p => { g.innerHTML += `<div class="group"><div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4"><img src="${p.img}" class="w-full h-full object-cover"></div><h3 class="font-bold">${p.name}</h3><p>₹${p.price.toLocaleString()}</p></div>`; }); }
-        function addToCart(id) { cartItems.push(products.find(p=>p.id===id)); updateCartBadge(); alert('Added to bag'); }
-        function removeFromCart(i) { cartItems.splice(i,1); updateCartBadge(); renderCart(); }
-        function updateCartBadge() { cartBadge.innerText = cartItems.length; cartBadge.classList.toggle('hidden', cartItems.length===0); document.getElementById('profile-order-count').innerText = cartItems.length; }
+        
+        function addToCart(id) { 
+            cartItems.push(products.find(p=>p.id===id)); 
+            localStorage.setItem('importHouseCart', JSON.stringify(cartItems));
+            updateCartBadge(); alert('Added to bag'); 
+        }
+        function removeFromCart(i) { 
+            cartItems.splice(i,1); 
+            localStorage.setItem('importHouseCart', JSON.stringify(cartItems));
+            updateCartBadge(); renderCart(); 
+        }
+        function updateCartBadge() { cartBadge.innerText = cartItems.length; cartBadge.classList.toggle('hidden', cartItems.length===0); } // Removing this since it's dynamic
         function renderCart() { 
             const c = document.getElementById('cart-items-container'); 
             if(cartItems.length===0) { c.innerHTML='<p class="text-center py-10">Empty.</p>'; document.getElementById('cart-total').innerText='₹0'; document.getElementById('checkout-total').innerText='₹0'; document.getElementById('cart-subtotal').innerText='₹0'; return; }
@@ -468,8 +496,8 @@
             const modalTotal = document.getElementById('modal-total'); if(modalTotal) modalTotal.innerText = '₹' + t.toLocaleString();
         }
 
-        // Alias for Modal Button
-        function finalizeOrder(method) { processOrder(method); }
+        // Alias for modal button
+        function finalizeOrder() { processOrder('Online'); }
     </script>
 </body>
 </html>
