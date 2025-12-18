@@ -3,65 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#ffffff">
-    <title>The Import House | Winter Collection</title>
+    <title>The Import House | Premium Global Fashion</title>
 
     <meta property="og:site_name" content="The Import House">
-    <meta property="og:title" content="The Import House | Winter Collection">
-    <meta name="apple-mobile-web-app-title" content="Import House">
-    
+    <meta property="og:title" content="The Import House | Premium Global Fashion">
     <link rel="icon" type="image/webp" href="theimporthouse.webp">
-    <link rel="apple-touch-icon" href="theimporthouse.webp">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "The Import House",
-      "url": "https://agright18.github.io/Theimporthouse/",
-      "image": "https://agright18.github.io/Theimporthouse/theimporthouse.webp"
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "The Import House",
-      "url": "https://agright18.github.io/Theimporthouse/",
-      "logo": "https://agright18.github.io/Theimporthouse/theimporthouse.webp"
-    }
-    </script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: { brand: '#000000' },
-                    height: { 'screen-dvh': '100dvh' },
-                    minHeight: { 'screen-dvh': '100dvh' }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { brand: '#000000' }, height: { 'screen-dvh': '100dvh' } } } }
     </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap');
-        
         body { font-family: 'Inter', sans-serif; overflow-x: hidden; background: #fff; -webkit-tap-highlight-color: transparent; }
-        
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-
         .section-hidden { display: none !important; }
         .section-active { display: block !important; animation: fadeIn 0.3s ease-out; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- SUCCESS TICK ANIMATION --- */
+        
+        /* SUCCESS TICK */
         .checkmark-circle { width: 80px; height: 80px; position: relative; display: inline-block; vertical-align: top; margin-bottom: 20px; }
         .checkmark-circle .background { width: 80px; height: 80px; border-radius: 50%; background: #22c55e; position: absolute; }
         .checkmark-circle .checkmark { border-radius: 5px; }
@@ -69,69 +32,50 @@
         .checkmark-circle .checkmark:after { opacity: 1; height: 40px; width: 20px; transform-origin: left top; border-right: 4px solid white; border-top: 4px solid white; content: ''; left: 22px; top: 40px; position: absolute; border-width: 4px; border-style: solid; border-color: white; border-top: none; border-right: none; transform: rotate(-45deg); }
         @keyframes checkmark { 0% { height: 0; width: 0; opacity: 1; } 20% { height: 0; width: 20px; opacity: 1; } 40% { height: 40px; width: 20px; opacity: 1; } 100% { height: 40px; width: 20px; opacity: 1; transform: scaleX(-1) rotate(135deg); } }
 
-        /* --- SNOWFALL --- */
+        /* SNOW & SLIDER */
         #snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; display: none; }
         .snowflake { position: absolute; top: -10px; background: #cbd5e1; border-radius: 50%; opacity: 0.9; animation: fall linear infinite; }
         @keyframes fall { 0% { transform: translateY(-10px) translateX(0px); opacity: 0.9; } 100% { transform: translateY(100vh) translateX(20px); opacity: 0; } }
-
-        /* --- MARQUEE --- */
-        .marquee-container { overflow: hidden; white-space: nowrap; width: 100%; mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
-        .marquee-track { display: inline-flex; gap: 1rem; animation: scroll 20s linear infinite; }
-        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .marquee-item { width: 120px; height: 160px; border-radius: 0.75rem; overflow: hidden; background: #f3f4f6; flex-shrink: 0; position: relative; }
-        @media (min-width: 768px) { .marquee-item { width: 150px; height: 200px; } }
-        .marquee-item img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* --- SLIDER --- */
         .slider-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1); z-index: 0; }
         .slide { min-width: 100%; height: 100%; position: relative; }
         .slide img { width: 100%; height: 100%; object-fit: cover; }
         .slide::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
-
-        /* Animation for Modal */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in-up { animation: fadeInUp 0.3s ease-out forwards; }
-        
-        .nav-item { position: relative; cursor: pointer; }
-        .nav-item::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: black; transition: width 0.3s ease-out; }
-        .nav-item:hover::after { width: 100%; }
     </style>
 </head>
 <body class="text-slate-900">
 
     <div id="snow-container"></div>
-
+    
     <div id="slider-track" class="slider-wrapper">
-        <div class="slide"><img src="https://images.unsplash.com/photo-1548624313-0396c75e4b1a?auto=format&fit=crop&w=1600&q=80" alt="Winter 1"></div>
-        <div class="slide"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=80" alt="Winter 2"></div>
-        <div class="slide"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80" alt="Winter 3"></div>
+        <div class="slide"><img src="https://images.unsplash.com/photo-1548624313-0396c75e4b1a?auto=format&fit=crop&w=1600&q=80"></div>
+        <div class="slide"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=80"></div>
+        <div class="slide"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80"></div>
     </div>
 
-    <div id="slider-controls" class="fixed inset-0 z-30 pointer-events-none flex items-center justify-between px-2 md:px-4">
-        <button onclick="prevSlide()" class="pointer-events-auto w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition"><i class="ph ph-caret-left text-xl md:text-2xl"></i></button>
-        <button onclick="nextSlide()" class="pointer-events-auto w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition"><i class="ph ph-caret-right text-xl md:text-2xl"></i></button>
+    <div id="slider-controls" class="fixed inset-0 z-30 pointer-events-none flex items-center justify-between px-4">
+        <button onclick="prevSlide()" class="pointer-events-auto w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/40 transition"><i class="ph ph-caret-left text-xl"></i></button>
+        <button onclick="nextSlide()" class="pointer-events-auto w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/40 transition"><i class="ph ph-caret-right text-xl"></i></button>
     </div>
 
     <div id="intro-overlay" class="fixed inset-0 z-[200] flex pointer-events-none">
-        <div id="door-left" class="w-1/2 h-full bg-black flex items-center justify-end border-r border-gray-800 relative z-20"><span class="text-white text-3xl md:text-6xl font-black tracking-tighter mr-2 md:mr-4">IMPORT</span></div>
-        <div id="door-right" class="w-1/2 h-full bg-black flex items-center justify-start relative z-20"><span class="text-white text-3xl md:text-6xl font-black tracking-tighter ml-2 md:ml-4">HOUSE</span></div>
+        <div id="door-left" class="w-1/2 h-full bg-black flex items-center justify-end border-r border-gray-800 relative z-20"><span class="text-white text-3xl font-black mr-4">IMPORT</span></div>
+        <div id="door-right" class="w-1/2 h-full bg-black flex items-center justify-start relative z-20"><span class="text-white text-3xl font-black ml-4">HOUSE</span></div>
     </div>
 
-    <div id="payment-modal" class="fixed inset-0 z-[300] bg-black/90 hidden items-center justify-center px-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center relative animate-fade-in-up">
-            <button onclick="closeModal('payment-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-black"><i class="ph ph-x text-2xl"></i></button>
+    <div id="payment-modal" class="fixed inset-0 z-[300] bg-black/90 hidden items-center justify-center px-4 flex">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center relative">
+            <button onclick="closeModal('payment-modal')" class="absolute top-4 right-4 text-gray-400"><i class="ph ph-x text-2xl"></i></button>
             <h2 class="text-2xl font-black mb-1">Scan to Pay</h2>
-            <p class="text-gray-500 text-sm mb-6">Total Amount: <span id="modal-total" class="font-bold text-black text-lg">₹0</span></p>
+            <p class="text-gray-500 text-sm mb-6">Total: <span id="modal-total" class="font-bold text-black text-lg">₹0</span></p>
             <div class="bg-gray-100 p-4 rounded-2xl mb-6 mx-auto w-64 h-64 flex items-center justify-center">
-                <img src="qrcode.jpg" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=YOUR_UPI_ID&pn=ImportHouse'" alt="Payment QR Code" class="w-full h-full object-contain mix-blend-multiply">
+                <img src="qrcode.jpg" class="w-full h-full object-contain mix-blend-multiply">
             </div>
-            <p class="text-xs text-gray-400 mb-4">Accepting GPay, Paytm, PhonePe & UPI</p>
-            <button onclick="processOrder('Online')" class="w-full bg-green-600 text-white font-bold py-4 rounded-full hover:bg-green-700 transition">Payment Completed</button>
+            <button onclick="processOrder('Online')" class="w-full bg-green-600 text-white font-bold py-4 rounded-full">Payment Completed</button>
         </div>
     </div>
 
-    <div id="success-modal" class="fixed inset-0 z-[300] bg-black/90 hidden items-center justify-center px-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center relative animate-fade-in-up">
+    <div id="success-modal" class="fixed inset-0 z-[300] bg-black/90 hidden items-center justify-center px-4 flex">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center relative">
             <div class="checkmark-circle"><div class="background"></div><div class="checkmark"></div></div>
             <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
             <p class="text-gray-500 text-sm mb-6">We have received your order.</p>
@@ -140,160 +84,134 @@
     </div>
 
     <div id="auth-container" class="fixed inset-0 z-[150] bg-white flex overflow-hidden">
-        <div class="hidden lg:block w-1/2 h-full relative overflow-hidden bg-gray-100">
-            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80" class="w-full h-full object-cover scale-110 login-img-anim">
-            <div class="absolute inset-0 bg-black/20"></div>
-            <div class="absolute bottom-10 left-10 text-white"><h2 class="text-4xl font-black tracking-tighter">PREMIUM.</h2><h2 class="text-4xl font-black tracking-tighter">GLOBAL.</h2></div>
-        </div>
-        <div class="w-full lg:w-1/2 h-full relative">
-            <div id="login-form" class="absolute inset-0 flex items-center justify-center p-6 bg-white transition-opacity duration-500">
-                <div class="max-w-md w-full login-content-anim opacity-0 translate-y-4">
-                    <div class="mb-10 text-center">
-                        
-                        <h1 class="text-4xl font-black tracking-tight mb-2">Welcome Back.</h1>
-                        <p class="text-gray-500">Enter your credentials.</p>
-                    </div>
-                    <form onsubmit="handleLogin(event)" class="space-y-6">
-                        <div><label class="block text-sm font-bold mb-2">Email</label><input id="login-email" type="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-black outline-none"></div>
-                        <div><label class="block text-sm font-bold mb-2">Password</label><input id="login-password" type="password" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-black outline-none"></div>
-                        <button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-full hover:bg-gray-900 transition flex items-center justify-center gap-2"><span>Sign In</span> <i class="ph ph-arrow-right"></i></button>
-                    </form>
-                    <p class="mt-8 text-center text-gray-500 text-sm">No account? <button onclick="toggleAuth('signup')" class="text-black font-bold underline">Apply for Access</button></p>
-                </div>
+        <div class="hidden lg:block w-1/2 h-full relative bg-gray-100"><img src="theimporthouse.webp" class="w-full h-full object-cover opacity-50"></div>
+        <div class="w-full lg:w-1/2 h-full relative flex items-center justify-center p-6 bg-white">
+            <div id="login-form" class="max-w-md w-full">
+                <div class="mb-10 text-center"><img src="theimporthouse.webp" class="w-20 mx-auto mb-4"><h1 class="text-4xl font-black">Welcome Back.</h1></div>
+                <form onsubmit="handleLogin(event)" class="space-y-6">
+                    <input id="login-email" type="email" placeholder="Email" class="w-full p-3 border rounded-lg">
+                    <input id="login-password" type="password" placeholder="Password" class="w-full p-3 border rounded-lg">
+                    <button type="submit" class="w-full bg-black text-white font-bold py-3 rounded-full">Sign In</button>
+                </form>
+                <p class="mt-6 text-center text-sm">No account? <button onclick="toggleAuth('signup')" class="font-bold underline">Sign Up</button></p>
             </div>
-            <div id="signup-form" class="absolute inset-0 flex items-center justify-center p-6 bg-white opacity-0 pointer-events-none transition-opacity duration-500">
-                <div class="max-w-md w-full">
-                    <h1 class="text-4xl font-black tracking-tight mb-2">Apply for Access.</h1>
-                    <form onsubmit="handleSignup(event)" class="space-y-4 mt-8">
-                        <div class="grid grid-cols-2 gap-4"><input id="reg-name" type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-300 outline-none" placeholder="Name"><input id="reg-surname" type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-300 outline-none" placeholder="Surname"></div>
-                        <input id="reg-email" type="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 outline-none" placeholder="Email"><input id="reg-password" type="password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 outline-none" placeholder="Password">
-                        <button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-full hover:bg-gray-900 transition mt-4">Create Account</button>
-                    </form>
-                    <p class="mt-6 text-center text-gray-500 text-sm">Member? <button onclick="toggleAuth('login')" class="text-black font-bold underline">Sign In</button></p>
-                </div>
+            <div id="signup-form" class="max-w-md w-full hidden">
+                <h1 class="text-4xl font-black mb-6">Create Account.</h1>
+                <form onsubmit="handleSignup(event)" class="space-y-4">
+                    <input id="reg-name" type="text" placeholder="First Name" class="w-full p-3 border rounded-lg">
+                    <input id="reg-surname" type="text" placeholder="Last Name" class="w-full p-3 border rounded-lg">
+                    <input id="reg-email" type="email" placeholder="Email" class="w-full p-3 border rounded-lg">
+                    <input id="reg-password" type="password" placeholder="Password" class="w-full p-3 border rounded-lg">
+                    <button type="submit" class="w-full bg-black text-white font-bold py-3 rounded-full">Register</button>
+                </form>
+                <p class="mt-6 text-center text-sm">Member? <button onclick="toggleAuth('login')" class="font-bold underline">Sign In</button></p>
             </div>
         </div>
     </div>
 
     <div id="main-app" class="hidden">
-        
-        <nav id="navbar" class="fixed top-0 w-full z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
-            <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex justify-between items-center">
-                <div onclick="switchView('home')" class="cursor-pointer flex items-center gap-2 group"><img src="theimporthouse.webp" class="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" alt="Import House"></div>
-                <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-500"><button onclick="switchView('home')" class="nav-item hover:text-black transition">Home</button><button onclick="switchView('shop')" class="nav-item hover:text-black transition">Shop</button><button onclick="switchView('wishlist')" class="nav-item hover:text-black transition">Wishlist</button></div>
-                <div class="flex items-center space-x-4 md:space-x-6">
-                    <button onclick="switchView('shop')" class="md:hidden text-gray-600 hover:text-blue-600"><i class="ph ph-storefront text-xl"></i></button>
-                    <i onclick="switchView('profile')" class="ph ph-user text-xl cursor-pointer hover:text-blue-600 transition"></i>
-                    <div class="relative cursor-pointer group" onclick="switchView('cart')"><i class="ph ph-shopping-bag text-xl hover:text-blue-600 transition"></i><span id="cart-badge" class="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span></div>
+        <nav class="fixed top-0 w-full z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100">
+            <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+                <div onclick="switchView('home')" class="cursor-pointer font-black text-xl">THE IMPORT HOUSE</div>
+                <div class="flex gap-4">
+                    <i onclick="switchView('shop')" class="ph ph-storefront text-xl"></i>
+                    <i onclick="switchView('profile')" class="ph ph-user text-xl"></i>
+                    <div class="relative" onclick="switchView('cart')">
+                        <i class="ph ph-shopping-bag text-xl"></i>
+                        <span id="cart-badge" class="absolute -top-2 -right-2 bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                    </div>
                 </div>
             </div>
         </nav>
 
-        <section id="home-view" class="section-active min-h-[100dvh] relative flex flex-col pt-24 md:pt-40 pb-4 z-20 justify-between">
-            <div class="h-1 md:h-10"></div>
-            <div class="flex-1 flex flex-col justify-center items-center text-center px-4 md:px-6">
-                <div class="hero-anim inline-block mb-3 md:mb-4 px-3 md:px-4 py-1.5 rounded-full border border-white/30 bg-black/30 backdrop-blur-md text-[10px] md:text-xs font-bold uppercase tracking-widest text-white opacity-0 translate-y-4">Winter Collection 2025</div>
-                <h1 class="hero-anim text-5xl md:text-8xl font-black tracking-tighter mb-4 md:mb-6 leading-[0.9] opacity-0 translate-y-4 text-white drop-shadow-2xl">DESIGN YOUR <br/> AESTHETIC.</h1>
-                <button onclick="switchView('shop')" class="hero-anim bg-white text-black px-8 md:px-10 py-3 md:py-4 rounded-full font-bold text-base md:text-lg flex items-center gap-2 mx-auto hover:bg-gray-200 transition shadow-xl opacity-0 translate-y-4 hover:scale-105 active:scale-95 duration-300 mt-4 md:mt-6">Start Shopping <i class="ph ph-arrow-right"></i></button>
+        <section id="home-view" class="section-active min-h-[100dvh] relative flex flex-col pt-24 pb-4 z-20 justify-between">
+            <div class="flex-1 flex flex-col justify-center items-center text-center px-4">
+                <div class="mb-4 px-3 py-1 rounded-full border border-white/30 bg-black/30 backdrop-blur-md text-[10px] text-white font-bold">WINTER 2025</div>
+                <h1 class="text-5xl font-black mb-6 text-white hero-anim">DESIGN YOUR<br>AESTHETIC.</h1>
+                <button onclick="switchView('shop')" class="bg-white text-black px-8 py-3 rounded-full font-bold hero-anim">Shop Now</button>
             </div>
-            <div class="w-full mt-6 md:mt-10 pb-6 flex-shrink-0"><div class="marquee-container opacity-0 hero-anim translate-y-4"><div class="marquee-track" id="marquee-track"></div></div></div>
         </section>
 
-        <section id="shop-view" class="section-hidden min-h-screen pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto bg-white relative z-40">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6"><div><h2 class="text-3xl md:text-4xl font-black mb-2">The Collection</h2><p class="text-gray-500">Exclusive drops.</p></div><div class="flex gap-2 overflow-x-auto mt-4 md:mt-0 pb-2 md:pb-0 w-full md:w-auto" id="brand-filters"></div></div>
-            <div class="mb-8 md:mb-10 relative max-w-md"><i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i><input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Search..." class="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:border-black outline-none transition bg-gray-50 focus:bg-white text-sm font-medium"></div>
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10"></div>
+        <section id="shop-view" class="section-hidden min-h-screen pt-24 px-4 bg-white z-40">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6">
+                <div><h2 class="text-3xl font-black mb-1">Shop</h2><p class="text-gray-500">Exclusive drops.</p></div>
+                <div id="brand-filters" class="flex gap-2 overflow-x-auto mt-4 md:mt-0 pb-2"></div>
+            </div>
+            
+            <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Search items..." class="w-full p-3 bg-gray-50 rounded-xl mb-6">
+            <div id="product-grid" class="grid grid-cols-1 gap-6 pb-20"></div>
         </section>
 
-        <section id="wishlist-view" class="section-hidden min-h-screen pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto bg-white relative z-40">
-            <div class="flex justify-between items-end mb-8 md:mb-12"><div><h2 class="text-3xl md:text-4xl font-black mb-2">My Wishlist</h2><p class="text-gray-500">Your curated favorite items.</p></div></div>
-            <div id="wishlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10"></div>
+        <section id="wishlist-view" class="section-hidden min-h-screen pt-24 px-4 bg-white z-40">
+            <h2 class="text-3xl font-black mb-6">Wishlist</h2>
+            <div id="wishlist-grid" class="grid grid-cols-1 gap-6 pb-20"></div>
         </section>
 
-        <section id="cart-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
-            <button onclick="switchView('shop')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Shop</button>
-            <h2 class="text-3xl md:text-4xl font-black mb-8">Your Bag</h2>
-            <div class="flex flex-col lg:flex-row gap-8 md:gap-12"><div class="flex-1" id="cart-items-container"><p class="text-gray-500 text-center py-10">Your cart is empty.</p></div><div class="w-full lg:w-80 h-fit bg-gray-50 p-6 rounded-2xl border border-gray-100"><h3 class="text-xl font-bold mb-4">Summary</h3><div class="flex justify-between mb-2 text-gray-500"><span>Subtotal</span> <span id="cart-subtotal">₹0</span></div><div class="flex justify-between mb-4 text-gray-500"><span>Shipping</span> <span>Free</span></div><div class="border-t pt-4 flex justify-between font-black text-lg mb-6"><span>Total</span> <span id="cart-total">₹0</span></div><button onclick="switchView('checkout')" class="w-full bg-black text-white font-bold py-3 rounded-full hover:bg-gray-800 transition">Proceed to Checkout</button></div></div>
+        <section id="cart-view" class="section-hidden min-h-screen pt-24 px-4 bg-white z-40">
+            <h2 class="text-3xl font-black mb-6">Cart</h2>
+            <div id="cart-items-container" class="mb-6"></div>
+            <div class="border-t pt-4">
+                <div class="flex justify-between font-bold text-lg mb-4"><span>Total</span><span id="cart-total">₹0</span></div>
+                <button onclick="switchView('checkout')" class="w-full bg-black text-white font-bold py-3 rounded-full">Checkout</button>
+            </div>
         </section>
 
-        <section id="checkout-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-2xl mx-auto pb-20 bg-white relative z-40">
-            <button onclick="switchView('cart')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Cart</button>
-            <h2 class="text-3xl font-black mb-2">Secure Checkout</h2>
-            <p class="text-gray-500 mb-8">Enter your details.</p>
-            <form onsubmit="handleCheckout(event)" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold mb-1">First Name</label><input id="checkout-fname" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div><div><label class="block text-sm font-bold mb-1">Last Name</label><input id="checkout-lname" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div></div>
-                <div><label class="block text-sm font-bold mb-1">Address</label><input id="checkout-address" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black" placeholder="Street address"></div>
-                <div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold mb-1">City</label><input id="checkout-city" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div><div><label class="block text-sm font-bold mb-1">Pincode</label><input id="checkout-zip" required type="text" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div></div>
-                <div><label class="block text-sm font-bold mb-1">Phone</label><input id="checkout-phone" required type="tel" class="w-full p-3 border rounded-lg outline-none focus:border-black"></div>
-                
-                <div class="pt-4 mt-6 border-t">
-                    <p class="font-bold text-sm mb-3">Payment Method</p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-black transition bg-gray-50">
-                            <input type="radio" name="payment" value="Online" checked class="mr-3 accent-black w-4 h-4">
-                            <div class="flex-1"><span class="font-bold block text-sm">Online Payment (UPI/QR)</span><span class="text-xs text-gray-500">Scan & Pay</span></div>
-                            <i class="ph ph-qr-code text-xl"></i>
-                        </label>
-                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-black transition bg-gray-50">
-                            <input type="radio" name="payment" value="COD" class="mr-3 accent-black w-4 h-4">
-                            <div class="flex-1"><span class="font-bold block text-sm">Cash on Delivery</span><span class="text-xs text-gray-500">Pay upon receipt</span></div>
-                            <i class="ph ph-money text-xl"></i>
-                        </label>
-                    </div>
+        <section id="checkout-view" class="section-hidden min-h-screen pt-24 px-4 bg-white z-40">
+            <button onclick="switchView('cart')" class="mb-4 font-bold flex gap-2 items-center"><i class="ph ph-arrow-left"></i> Back</button>
+            <h2 class="text-2xl font-black mb-6">Checkout</h2>
+            <form onsubmit="handleCheckout(event)" class="space-y-4 pb-20">
+                <input id="checkout-fname" required placeholder="First Name" class="w-full p-3 border rounded-lg">
+                <input id="checkout-lname" required placeholder="Last Name" class="w-full p-3 border rounded-lg">
+                <input id="checkout-address" required placeholder="Address" class="w-full p-3 border rounded-lg">
+                <div class="grid grid-cols-2 gap-4">
+                    <input id="checkout-city" required placeholder="City" class="p-3 border rounded-lg">
+                    <input id="checkout-zip" required placeholder="Zip" class="p-3 border rounded-lg">
                 </div>
-
-                <div class="pt-6 mt-2"><div class="flex justify-between font-black text-xl mb-6"><span>Total</span> <span id="checkout-total">₹0</span></div><button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-full hover:bg-gray-800 transition">Place Order</button></div>
+                <input id="checkout-phone" required placeholder="Phone" class="w-full p-3 border rounded-lg">
+                
+                <div class="pt-4 border-t">
+                    <p class="font-bold mb-3">Payment Method</p>
+                    <label class="flex items-center p-3 border rounded-lg mb-3">
+                        <input type="radio" name="payment" value="Online" checked class="mr-3"> Online (UPI/QR)
+                    </label>
+                    <label class="flex items-center p-3 border rounded-lg">
+                        <input type="radio" name="payment" value="COD" class="mr-3"> Cash on Delivery
+                    </label>
+                </div>
+                
+                <button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-full mt-4">Place Order</button>
             </form>
         </section>
 
-        <section id="profile-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
-            <button onclick="switchView('home')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Home</button>
-            <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900"><img src="banner.jpg" class="w-full h-full object-cover opacity-80"></div>
-                <div class="px-6 md:px-8 pb-8 relative">
-                    <div class="absolute -top-10 md:-top-12 left-6 md:left-8 w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white p-1 shadow-lg"><div class="w-full h-full bg-black text-white rounded-xl flex items-center justify-center text-3xl md:text-4xl font-black"><span id="user-initial">G</span></div></div>
-                    <div class="pt-12 md:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center"><div><h2 id="display-name" class="text-2xl font-black text-gray-900">Guest User</h2><p class="text-gray-500 text-sm">Joined 2025</p></div><button onclick="logout()" class="mt-4 md:mt-0 px-6 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition flex items-center gap-2 text-sm md:text-base"><i class="ph ph-sign-out"></i> Sign Out</button></div>
-                    <div class="grid grid-cols-2 gap-4 my-8"><div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center"><div class="text-2xl font-black mb-1" id="profile-order-count">0</div><div class="text-xs text-gray-500 uppercase font-bold">Orders</div></div><div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center"><div class="text-2xl font-black mb-1" id="profile-wishlist-count">0</div><div class="text-xs text-gray-500 uppercase font-bold">Wishlist</div></div></div>
-                </div>
+        <section id="profile-view" class="section-hidden min-h-screen pt-24 px-4 bg-white z-40">
+            <h2 class="text-3xl font-black mb-2" id="display-name">Guest</h2>
+            <p class="text-gray-500 mb-6">Member</p>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-gray-50 p-4 rounded-xl text-center"><div class="text-2xl font-black" id="profile-order-count">0</div><div class="text-xs uppercase font-bold text-gray-500">Orders</div></div>
+                <div class="bg-gray-50 p-4 rounded-xl text-center"><div class="text-2xl font-black" id="profile-wishlist-count">0</div><div class="text-xs uppercase font-bold text-gray-500">Wishlist</div></div>
             </div>
+            <button onclick="logout()" class="w-full py-3 border border-red-500 text-red-500 font-bold rounded-lg">Sign Out</button>
         </section>
-
-        <footer id="footer" class="bg-black text-white py-12 md:py-16 border-t border-gray-900 relative z-50">
-            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
-                <div class="col-span-1 md:col-span-2"><div class="flex items-center gap-2 mb-4"><img src="theimporthouse.webp" class="h-10 md:h-12 w-auto object-contain" alt="Import House"></div><p class="text-gray-400 max-w-xs mb-6 text-sm">Premium streetwear and luxury fashion.</p></div>
-                <div class="hidden md:block"><h3 class="font-bold mb-4">Discover</h3><ul class="space-y-3 text-gray-400 text-sm"><li><a href="#" onclick="switchView('shop')" class="hover:text-white">New Arrivals</a></li><li><a href="#" onclick="switchView('shop')" class="hover:text-white">Brands</a></li></ul></div>
-            </div>
-            <div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-gray-900 text-gray-500 text-xs flex justify-between"><p>&copy; 2025 Import House Inc.</p></div>
-        </footer>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, orderBy, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         // --- ⚠️ PASTE YOUR KEYS HERE ⚠️ ---
         const firebaseConfig = {
-            apiKey: "PASTE_YOUR_API_KEY_HERE",
-            authDomain: "PASTE_YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "PASTE_YOUR_PROJECT_ID",
-            storageBucket: "PASTE_YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "PASTE_YOUR_SENDER_ID",
-            appId: "PASTE_YOUR_APP_ID"
+            apiKey: "AIzaSyAVAhzIDoiFiGxHN0z2ze9TSocB3Cbb6i8",
+  authDomain: "shop-clothes-aded9.firebaseapp.com",
+  projectId: "shop-clothes-aded9",
+  storageBucket: "shop-clothes-aded9.firebasestorage.app",
+  messagingSenderId: "119802803208",
+  appId: "1:119802803208:web:984c947412580274268dbd",
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        // ✅ NEW: ENABLE OFFLINE PERSISTENCE (Makes it load instantly on mobile)
-        enableIndexedDbPersistence(db).catch((err) => {
-            if (err.code == 'failed-precondition') {
-                console.log('Multiple tabs open, persistence can only be enabled in one tab at a a time.');
-            } else if (err.code == 'unimplemented') {
-                console.log('The current browser does not support all of the features required to enable persistence');
-            }
-        });
         
         // Export to Global Scope
         window.auth = auth; 
@@ -302,46 +220,46 @@
         window.addDoc = addDoc; 
         window.serverTimestamp = serverTimestamp;
 
-        // FETCH PRODUCTS DYNAMICALLY
+        // --- FETCH PRODUCTS DYNAMICALLY WITH FALLBACK ---
         const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
         
-        // This listener is now faster because it checks phone memory first!
+        // Fail-Safe: If Firebase takes > 2 seconds, show sample products
+        const dbTimeout = setTimeout(() => {
+            if(window.products.length === 0) {
+                console.log("Database slow/blocked. Loading Samples...");
+                window.products = [
+                    { id: '1', name: 'Sample Nike Hoodie', brand: 'Nike', price: 4999, img: 'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?w=400' },
+                    { id: '2', name: 'Sample Adidas Tee', brand: 'Adidas', price: 1999, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400' }
+                ];
+                if(!document.getElementById('shop-view').classList.contains('section-hidden')) window.renderProducts('All');
+            }
+        }, 2000);
+
         onSnapshot(q, (snapshot) => {
+            clearTimeout(dbTimeout); // Data arrived, cancel fallback
             window.products = [];
             snapshot.forEach(doc => {
                 window.products.push({ id: doc.id, ...doc.data() });
             });
-            // Initial render if on shop page
             if(!document.getElementById('shop-view').classList.contains('section-hidden')) {
                 window.renderProducts('All');
             }
-            if(window.createMarquee) window.createMarquee();
+        }, (error) => {
+            console.error("DB Error:", error); // Logs permission errors
         });
 
         // Auth Listeners
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Try to get user from local storage first for speed
-                const cachedUser = localStorage.getItem('importHouseUser');
-                if(cachedUser) {
-                    const u = JSON.parse(cachedUser);
-                    document.getElementById('display-name').innerText = `${u.name} ${u.surname}`;
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (docSnap.exists()) {
+                    const d = docSnap.data();
+                    localStorage.setItem('importHouseUser', JSON.stringify({ name: d.firstName, surname: d.lastName }));
+                    document.getElementById('display-name').innerText = `${d.firstName} ${d.lastName}`;
                 }
-
-                // Background fetch to update if needed
-                getDoc(doc(db, "users", user.uid)).then(docSnap => {
-                    if (docSnap.exists()) {
-                        const d = docSnap.data();
-                        localStorage.setItem('importHouseUser', JSON.stringify({ name: d.firstName, surname: d.lastName }));
-                        document.getElementById('display-name').innerText = `${d.firstName} ${d.lastName}`;
-                    }
-                });
-                
-                // Fetch Order Count
                 const orderQ = query(collection(db, "orders"), where("userId", "==", user.uid));
-                getDocs(orderQ).then(orderSnap => {
-                    document.getElementById('profile-order-count').innerText = orderSnap.size;
-                });
+                const orderSnap = await getDocs(orderQ);
+                document.getElementById('profile-order-count').innerText = orderSnap.size;
 
                 document.getElementById('auth-container').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
@@ -370,234 +288,208 @@
     </script>
 
     <script>
-        let currentUser = { name: "Guest", surname: "User" };
+        window.products = [];
         window.cartItems = JSON.parse(localStorage.getItem('importHouseCart')) || [];
         window.wishlistItems = JSON.parse(localStorage.getItem('importHouseWishlist')) || [];
-        window.products = []; // Dynamically fetched
-        let currentSlide = 0; let currentBrand = 'All';
-
+        let currentBrand = 'All';
+        let currentSlide = 0;
         const brands = ['All', 'Nike', 'Adidas', 'Levis', 'Puma', 'Zara'];
 
-        const cartBadge = document.getElementById('cart-badge');
-        const sliderTrack = document.getElementById('slider-track');
-        const paymentModal = document.getElementById('payment-modal');
-        const successModal = document.getElementById('success-modal');
-
         window.addEventListener('load', () => {
-            const storedCart = localStorage.getItem('importHouseCart');
-            if (storedCart) { window.cartItems = JSON.parse(storedCart); updateCartBadge(); }
+            closeModal('payment-modal');
+            closeModal('success-modal');
+            updateBadges();
             
-            const storedWish = localStorage.getItem('importHouseWishlist');
-            if (storedWish) { window.wishlistItems = JSON.parse(storedWish); 
-                const wishCount = document.getElementById('profile-wishlist-count');
-                if(wishCount) wishCount.innerText = window.wishlistItems.length;
-            }
-
-            const savedUser = localStorage.getItem('importHouseUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                const nameEl = document.getElementById('display-name');
-                const initEl = document.getElementById('user-initial');
-                if(nameEl) nameEl.innerText = `${currentUser.name} ${currentUser.surname}`;
-                if(initEl) initEl.innerText = currentUser.name.charAt(0).toUpperCase();
-                
-                document.getElementById('auth-container').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                document.body.classList.add('app-active');
-                document.getElementById('intro-overlay').style.display = 'none';
-                switchView('home');
-            } else {
-                const tl = gsap.timeline();
-                tl.to("#door-left", { x: "-100%", duration: 1.5, ease: "power4.inOut", delay: 0.5 })
-                  .to("#door-right", { x: "100%", duration: 1.5, ease: "power4.inOut" }, "<")
-                  .to("#intro-overlay", { display: "none" })
-                  .to(".login-img-anim", { scale: 1, duration: 2, ease: "power2.out" }, "-=1.5")
-                  .to(".login-content-anim", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=1");
-            }
-            createSnowflakes(); renderFilters();
+            const u = JSON.parse(localStorage.getItem('importHouseUser'));
+            if(u) document.getElementById('display-name').innerText = `${u.name} ${u.surname}`;
+            
+            setTimeout(() => {
+                if(!document.querySelector('#auth-container').classList.contains('hidden')) return;
+                gsap.to("#door-left", {x:"-100%", duration:1.5});
+                gsap.to("#door-right", {x:"100%", duration:1.5},"<");
+                gsap.to("#intro-overlay", {display:"none", delay:1.5});
+            }, 500);
+            
+            document.getElementById('brand-filters').innerHTML = brands.map(b => 
+                `<button onclick="filterBrand('${b}', this)" class="filter-btn px-6 py-2 rounded-full text-sm font-bold transition whitespace-nowrap ${b==='All'?'bg-black text-white':'bg-gray-100 text-gray-600'}">${b}</button>`
+            ).join('');
+            
+            setInterval(nextSlide, 4000);
         });
 
-        function switchView(viewName) {
-            window.scrollTo({ top: 0, behavior: 'auto' });
-            ['home-view', 'shop-view', 'profile-view', 'cart-view', 'wishlist-view', 'checkout-view'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) { el.classList.add('section-hidden'); el.classList.remove('section-active'); }
+        window.switchView = (v) => {
+            window.scrollTo(0,0);
+            document.querySelectorAll('section').forEach(el => {
+                el.classList.add('section-hidden');
+                el.classList.remove('section-active');
             });
-            const target = document.getElementById(viewName + '-view');
+            const target = document.getElementById(v+'-view');
             if(target) { target.classList.remove('section-hidden'); target.classList.add('section-active'); }
-
-            if (viewName === 'home') {
-                document.getElementById('snow-container').style.display = 'block';
-                document.getElementById('slider-controls').style.display = 'flex';
-                gsap.fromTo(".hero-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6 });
-            } else {
-                document.getElementById('snow-container').style.display = 'none';
-                document.getElementById('slider-controls').style.display = 'none';
-            }
-
-            if (viewName === 'shop') { renderProducts(currentBrand); }
-            if (viewName === 'cart') { renderCart(); }
-            if (viewName === 'wishlist') { renderWishlist(); }
-            if (viewName === 'profile') { gsap.fromTo(".profile-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }); }
-        }
-
-        // --- SAFE FUNCTIONS ---
-        function closeModal(id) { 
-            const el = document.getElementById(id);
-            if(el) { el.classList.add('hidden'); el.classList.remove('flex'); }
-        }
-        function resetApp() { closeModal('success-modal'); switchView('home'); }
-        
-        function handleCheckout(e) {
-            e.preventDefault();
-            if(window.cartItems.length === 0) { alert("Cart is empty!"); return; }
-            const method = document.querySelector('input[name="payment"]:checked').value;
-            if(method === 'COD') { processOrder('COD'); } else { openPaymentModal(); }
-        }
-
-        function openPaymentModal() {
-            let total = 0; window.cartItems.forEach(i => total += i.price);
-            const totalEl = document.getElementById('modal-total');
-            if(totalEl) totalEl.innerText = '₹' + total.toLocaleString();
-            const modal = document.getElementById('payment-modal');
-            if(modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
-        }
-
-        async function processOrder(method) {
-            if(method === 'Online') closeModal('payment-modal');
             
-            const fname = document.getElementById('checkout-fname').value;
-            const lname = document.getElementById('checkout-lname').value;
-            const address = document.getElementById('checkout-address').value;
-            const city = document.getElementById('checkout-city').value;
-            const zip = document.getElementById('checkout-zip').value;
-            const phone = document.getElementById('checkout-phone').value;
-            let total = 0; window.cartItems.forEach(i => total += i.price);
+            if(v === 'home') document.getElementById('snow-container').style.display = 'block';
+            else document.getElementById('snow-container').style.display = 'none';
 
-            const orderData = {
+            if(v === 'shop') renderProducts(currentBrand);
+            if(v === 'cart') renderCart();
+            if(v === 'wishlist') renderWishlist();
+        };
+
+        window.renderProducts = (brand) => {
+            currentBrand = brand;
+            const term = document.getElementById('search-input')?.value.toLowerCase() || '';
+            const grid = document.getElementById('product-grid');
+            if(!grid) return;
+            
+            grid.innerHTML = "";
+            const filtered = window.products.filter(p => (brand === 'All' || p.brand === brand) && p.name.toLowerCase().includes(term));
+            
+            if(window.products.length === 0) { grid.innerHTML = '<p class="text-center text-gray-500 py-10">Loading Products...</p>'; return; }
+            if(filtered.length === 0) { grid.innerHTML = '<p class="text-center text-gray-500 py-10">No items found.</p>'; return; }
+
+            filtered.forEach(p => {
+                const isWish = window.wishlistItems.some(x => x.id === p.id);
+                grid.innerHTML += `
+                    <div class="group relative bg-gray-50 rounded-2xl overflow-hidden shadow-sm">
+                        <div class="aspect-[3/4]"><img src="${p.img}" onerror="this.src='https://via.placeholder.com/400'" class="w-full h-full object-cover"></div>
+                        <div class="p-3">
+                            <div class="flex justify-between items-start">
+                                <div><h3 class="font-bold text-sm line-clamp-1">${p.name}</h3><p class="text-xs text-gray-500">${p.brand}</p></div>
+                                <p class="font-bold text-sm">₹${p.price}</p>
+                            </div>
+                            <div class="flex gap-2 mt-3">
+                                <button onclick="toggleWish('${p.id}')" class="flex-1 py-2 rounded-lg border ${isWish ? 'bg-red-50 border-red-200 text-red-500' : 'border-gray-200'} flex justify-center"><i class="ph ${isWish ? 'ph-heart-fill' : 'ph-heart'}"></i></button>
+                                <button onclick="addCart('${p.id}')" class="flex-[3] py-2 bg-black text-white rounded-lg text-sm font-bold">Add</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        window.addCart = (id) => {
+            const p = window.products.find(x => x.id === id);
+            if(p) { 
+                window.cartItems.push(p); 
+                localStorage.setItem('importHouseCart', JSON.stringify(window.cartItems));
+                updateBadges(); alert('Added to Bag');
+            }
+        };
+
+        window.toggleWish = (id) => {
+            const p = window.products.find(x => x.id === id);
+            const idx = window.wishlistItems.findIndex(x => x.id === id);
+            if(idx > -1) window.wishlistItems.splice(idx, 1);
+            else if(p) window.wishlistItems.push(p);
+            
+            localStorage.setItem('importHouseWishlist', JSON.stringify(window.wishlistItems));
+            updateBadges(); 
+            if(!document.getElementById('shop-view').classList.contains('section-hidden')) renderProducts(currentBrand);
+            if(!document.getElementById('wishlist-view').classList.contains('section-hidden')) renderWishlist();
+        };
+
+        window.filterBrand = (brand, btn) => {
+            document.querySelectorAll('.filter-btn').forEach(el=>el.className=el.className.replace('bg-black text-white','bg-gray-100 text-gray-600'));
+            btn.className=btn.className.replace('bg-gray-100 text-gray-600','bg-black text-white');
+            renderProducts(brand);
+        };
+
+        function renderCart() {
+            const c = document.getElementById('cart-items-container');
+            if(!c) return;
+            if(window.cartItems.length === 0) {
+                c.innerHTML = '<p class="text-center text-gray-500 py-10">Empty.</p>';
+                document.getElementById('cart-total').innerText = "₹0";
+                return;
+            }
+            let t = 0;
+            c.innerHTML = window.cartItems.map((p, i) => {
+                t += Number(p.price);
+                return `<div class="flex gap-3 mb-4 border-b pb-4">
+                    <img src="${p.img}" class="w-16 h-20 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm">${p.name}</h4>
+                        <p class="text-sm">₹${p.price}</p>
+                        <button onclick="removeCart(${i})" class="text-xs text-red-500 mt-1">Remove</button>
+                    </div>
+                </div>`;
+            }).join('');
+            document.getElementById('cart-total').innerText = "₹" + t;
+            if(document.getElementById('modal-total')) document.getElementById('modal-total').innerText = "₹" + t;
+        }
+
+        window.removeCart = (i) => {
+            window.cartItems.splice(i, 1);
+            localStorage.setItem('importHouseCart', JSON.stringify(window.cartItems));
+            renderCart(); updateBadges();
+        };
+
+        function renderWishlist() {
+            const g = document.getElementById('wishlist-grid');
+            if(window.wishlistItems.length === 0) { g.innerHTML = '<p class="text-center text-gray-500">Empty.</p>'; return; }
+            g.innerHTML = window.wishlistItems.map(p => `
+                <div class="flex gap-3 items-center border-b pb-4">
+                    <img src="${p.img}" class="w-16 h-16 object-cover rounded-lg">
+                    <div class="flex-1"><h4 class="font-bold text-sm">${p.name}</h4><p class="text-xs">₹${p.price}</p></div>
+                    <button onclick="addCart('${p.id}')" class="text-xs bg-black text-white px-3 py-1 rounded">Add</button>
+                </div>`).join('');
+        }
+
+        function updateBadges() {
+            const b = document.getElementById('cart-badge');
+            if(b) { b.innerText = window.cartItems.length; b.classList.toggle('hidden', window.cartItems.length === 0); }
+            if(document.getElementById('profile-wishlist-count')) document.getElementById('profile-wishlist-count').innerText = window.wishlistItems.length;
+        }
+
+        window.closeModal = (id) => { const el = document.getElementById(id); if(el) { el.classList.add('hidden'); el.classList.remove('flex'); } };
+        window.resetApp = () => { window.closeModal('success-modal'); window.switchView('home'); };
+
+        window.handleCheckout = (e) => {
+            e.preventDefault();
+            if(window.cartItems.length === 0) { alert("Cart is empty"); return; }
+            const method = document.querySelector('input[name="payment"]:checked').value;
+            if(method === 'COD') processOrder('COD');
+            else { const m = document.getElementById('payment-modal'); if(m) { m.classList.remove('hidden'); m.classList.add('flex'); } }
+        };
+
+        window.processOrder = async (method) => {
+            if(method === 'Online') window.closeModal('payment-modal');
+            const btn = document.querySelector('#checkout-view button[type="submit"]');
+            if(btn) btn.innerText = "Processing...";
+            let t = 0; window.cartItems.forEach(i => t += Number(i.price));
+            
+            const order = {
                 userId: window.auth.currentUser ? window.auth.currentUser.uid : "guest",
-                customer: { firstName: fname, lastName: lname, address: address, city: city, zip: zip, phone: phone },
+                customer: {
+                    firstName: document.getElementById('checkout-fname').value,
+                    lastName: document.getElementById('checkout-lname').value,
+                    address: document.getElementById('checkout-address').value,
+                    city: document.getElementById('checkout-city').value,
+                    zip: document.getElementById('checkout-zip').value,
+                    phone: document.getElementById('checkout-phone').value
+                },
                 items: window.cartItems,
-                totalAmount: total,
-                paymentStatus: method === 'Online' ? "Paid via QR" : "Pending (COD)",
+                totalAmount: t,
+                paymentStatus: method === 'Online' ? "Paid Online" : "COD",
                 status: "Pending",
                 timestamp: window.serverTimestamp()
             };
 
             try {
-                await window.addDoc(window.collection(window.db, "orders"), orderData);
-                window.cartItems = []; 
-                localStorage.removeItem('importHouseCart'); 
-                updateCartBadge(); renderCart();
-                const sModal = document.getElementById('success-modal');
-                if(sModal) { sModal.classList.remove('hidden'); sModal.classList.add('flex'); }
-            } catch (error) { alert("Error: " + error.message); }
-        }
+                await window.addDoc(window.collection(window.db, "orders"), order);
+                window.cartItems = [];
+                localStorage.removeItem('importHouseCart');
+                updateBadges(); renderCart();
+                const s = document.getElementById('success-modal');
+                if(s) { s.classList.remove('hidden'); s.classList.add('flex'); }
+            } catch(e) { alert("Error: " + e.message); } 
+            finally { if(btn) btn.innerText = "Place Order"; }
+        };
 
-        function updateSlide() { sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`; }
-        function nextSlide() { currentSlide = (currentSlide < 2) ? currentSlide + 1 : 0; updateSlide(); }
-        function prevSlide() { currentSlide = (currentSlide > 0) ? currentSlide - 1 : 2; updateSlide(); }
-        function createSnowflakes() {
-            const sc = document.getElementById('snow-container'); sc.innerHTML = '';
-            for (let i = 0; i < 50; i++) {
-                const f = document.createElement('div'); f.className = 'snowflake';
-                f.style.width = Math.random()*5+2+'px'; f.style.height=f.style.width; f.style.left=Math.random()*100+'vw';
-                f.style.animationDuration=Math.random()*3+2+'s'; sc.appendChild(f);
-            }
-        }
-        function createMarquee() {
-            if(window.products.length === 0) return;
-            const lp = [...window.products, ...window.products]; // Loop
-            const track = document.getElementById('marquee-track');
-            if(track) track.innerHTML = lp.map(p => `<div class="marquee-item"><img src="${p.img}" alt="${p.name}"></div>`).join('');
-        }
-        window.createMarquee = createMarquee; // Expose to module
-
-        function renderFilters() {
-            if(document.getElementById('brand-filters').innerHTML !== "") return;
-            document.getElementById('brand-filters').innerHTML = brands.map(b => `<button onclick="filterBrand('${b}', this)" class="filter-btn px-6 py-2 rounded-full text-sm font-bold transition whitespace-nowrap ${b==='All'?'bg-black text-white':'bg-gray-100 text-gray-600'}">${b}</button>`).join('');
-        }
-        function filterBrand(b, btn) { document.querySelectorAll('.filter-btn').forEach(el=>el.className=el.className.replace('bg-black text-white','bg-gray-100 text-gray-600')); btn.className=btn.className.replace('bg-gray-100 text-gray-600','bg-black text-white'); renderProducts(b); }
-        function handleSearch() { renderProducts(currentBrand); }
-        
-        // MAIN RENDER FUNCTION
-        function renderProducts(brand) {
-            currentBrand = brand; 
-            const term = document.getElementById('search-input')?.value.toLowerCase() || ''; 
-            const grid = document.getElementById('product-grid'); 
-            grid.innerHTML = '';
-            
-            // Check if products exist yet
-            if(window.products.length === 0) { grid.innerHTML = '<p class="col-span-3 text-center py-10 text-gray-500">Loading Products...</p>'; return; }
-
-            const filtered = window.products.filter(p => (brand === 'All' || p.brand === brand) && p.name.toLowerCase().includes(term));
-            
-            if (filtered.length === 0) { grid.innerHTML = '<p class="col-span-3 text-center py-10 text-gray-500">No products found.</p>'; return; }
-            
-            filtered.forEach((p, i) => {
-                const isWishlisted = window.wishlistItems.some(x => x.id === p.id);
-                
-                const card = document.createElement('div'); card.className = "group opacity-0 translate-y-4";
-                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4 cursor-pointer"><img src="${p.img}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"><div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div><div class="absolute top-4 left-4 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">${p.brand}</div><button onclick="toggleWishlist('${p.id}', this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-md"><i class="ph ${isWishlisted?'ph-heart-fill text-red-500':'ph-heart'} text-lg"></i></button><button onclick="addToCart('${p.id}')" class="absolute bottom-4 right-4 bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg"><i class="ph ph-plus text-lg"></i></button></div><h3 class="text-lg font-bold">${p.name}</h3><p class="text-gray-500">₹${p.price.toLocaleString()}</p>`;
-                grid.appendChild(card); gsap.to(card, { opacity: 1, y: 0, duration: 0.4, delay: i * 0.05 });
-            });
-        }
-        window.renderProducts = renderProducts; // Expose to module
-
-        function toggleWishlist(id, btn) { 
-            const p = window.products.find(x=>x.id===id); 
-            const i = window.wishlistItems.findIndex(x=>x.id===id); 
-            if(i>-1) { 
-                window.wishlistItems.splice(i,1); 
-                btn.querySelector('i').className="ph ph-heart text-lg"; 
-            } else { 
-                window.wishlistItems.push(p); 
-                btn.querySelector('i').className="ph ph-heart-fill text-red-500 text-lg"; 
-            } 
-            localStorage.setItem('importHouseWishlist', JSON.stringify(window.wishlistItems)); 
-            document.getElementById('profile-wishlist-count').innerText = window.wishlistItems.length; 
-        }
-        
-        function renderWishlist() { 
-            const g = document.getElementById('wishlist-grid'); g.innerHTML=''; 
-            if(window.wishlistItems.length === 0) { g.innerHTML='<p class="col-span-3 text-center text-gray-500">Empty.</p>'; return; }
-            window.wishlistItems.forEach(p => { g.innerHTML += `<div class="group"><div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4"><img src="${p.img}" class="w-full h-full object-cover"></div><h3 class="font-bold">${p.name}</h3><p>₹${p.price.toLocaleString()}</p></div>`; }); 
-        }
-        
-        function addToCart(id) { 
-            const p = window.products.find(x=>x.id===id); 
-            if(p) {
-                window.cartItems.push(p); 
-                localStorage.setItem('importHouseCart', JSON.stringify(window.cartItems));
-                updateCartBadge(); 
-                alert('Added to bag');
-            }
-        }
-        
-        function removeFromCart(i) { 
-            window.cartItems.splice(i,1); 
-            localStorage.setItem('importHouseCart', JSON.stringify(window.cartItems));
-            updateCartBadge(); renderCart(); 
-        }
-        
-        function updateCartBadge() { 
-            cartBadge.innerText = window.cartItems.length; 
-            cartBadge.classList.toggle('hidden', window.cartItems.length===0); 
-            document.getElementById('profile-order-count').innerText = "0"; 
-        }
-        
-        function renderCart() { 
-            const c = document.getElementById('cart-items-container'); 
-            if(window.cartItems.length===0) { c.innerHTML='<p class="text-center py-10">Empty.</p>'; document.getElementById('cart-total').innerText='₹0'; document.getElementById('checkout-total').innerText='₹0'; document.getElementById('cart-subtotal').innerText='₹0'; return; }
-            let t = 0; c.innerHTML = window.cartItems.map((p,i) => { t+=Number(p.price); return `<div class="flex gap-4 mb-4 border-b pb-4"><img src="${p.img}" class="w-20 h-24 rounded-lg object-cover"><div class="flex-1"><h3>${p.name}</h3><p class="text-sm text-gray-500">${p.brand}</p><p class="font-bold">₹${Number(p.price).toLocaleString()}</p><button onclick="removeFromCart(${i})" class="text-red-500 text-sm mt-2">Remove</button></div></div>`; }).join('');
-            document.getElementById('cart-total').innerText = '₹' + t.toLocaleString();
-            document.getElementById('cart-subtotal').innerText = '₹' + t.toLocaleString();
-            document.getElementById('checkout-total').innerText = '₹' + t.toLocaleString();
-            const modalTotal = document.getElementById('modal-total'); if(modalTotal) modalTotal.innerText = '₹' + t.toLocaleString();
-        }
-
-        // Alias for modal button
-        function finalizeOrder() { processOrder('Online'); }
+        function nextSlide() { currentSlide = (currentSlide < 2) ? currentSlide + 1 : 0; document.getElementById('slider-track').style.transform = `translateX(-${currentSlide * 100}%)`; }
+        function prevSlide() { currentSlide = (currentSlide > 0) ? currentSlide - 1 : 2; document.getElementById('slider-track').style.transform = `translateX(-${currentSlide * 100}%)`; }
+        function createSnowflakes() { const c = document.getElementById('snow-container'); if(!c) return; c.innerHTML = ''; for(let i=0; i<30; i++){ const d = document.createElement('div'); d.className='snowflake'; d.style.left = Math.random()*100+'vw'; d.style.animationDuration = Math.random()*3+2+'s'; c.appendChild(d); } }
+        window.nextSlide = nextSlide; window.prevSlide = prevSlide;
+        function toggleAuth(mode) { if(mode==='signup') { document.getElementById('login-form').classList.add('hidden'); document.getElementById('signup-form').classList.remove('hidden'); } else { document.getElementById('signup-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); } }
+        window.toggleAuth = toggleAuth;
     </script>
 </body>
 </html>
