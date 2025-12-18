@@ -270,94 +270,103 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, orderBy, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- ⚠️ PASTE YOUR REAL KEYS HERE ⚠️ ---
+        // --- ⚠️ PASTE YOUR KEYS HERE ⚠️ ---
         const firebaseConfig = {
-            apiKey: "AIzaSyAVAhzIDoiFiGxHN0z2ze9TSocB3Cbb6i8",
-  authDomain: "shop-clothes-aded9.firebaseapp.com",
-  projectId: "shop-clothes-aded9",
-  storageBucket: "shop-clothes-aded9.firebasestorage.app",
-  messagingSenderId: "119802803208",
-  appId: "1:119802803208:web:984c947412580274268dbd",
+            apiKey: "PASTE_YOUR_API_KEY_HERE",
+            authDomain: "PASTE_YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "PASTE_YOUR_PROJECT_ID",
+            storageBucket: "PASTE_YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "PASTE_YOUR_SENDER_ID",
+            appId: "PASTE_YOUR_APP_ID"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        window.auth = auth; window.db = db; window.collection = collection; window.addDoc = addDoc; window.serverTimestamp = serverTimestamp;
 
-        window.handleSignup = async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('reg-name').value;
-            const surname = document.getElementById('reg-surname').value;
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-password').value;
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await setDoc(doc(db, "users", userCredential.user.uid), { firstName: name, lastName: surname, email: email });
-                localStorage.setItem('importHouseUser', JSON.stringify({ name: name, surname: surname }));
-                location.reload();
-            } catch (error) { alert("Error: " + error.message); }
-        }
+        // ✅ NEW: ENABLE OFFLINE PERSISTENCE (Makes it load instantly on mobile)
+        enableIndexedDbPersistence(db).catch((err) => {
+            if (err.code == 'failed-precondition') {
+                console.log('Multiple tabs open, persistence can only be enabled in one tab at a a time.');
+            } else if (err.code == 'unimplemented') {
+                console.log('The current browser does not support all of the features required to enable persistence');
+            }
+        });
+        
+        // Export to Global Scope
+        window.auth = auth; 
+        window.db = db; 
+        window.collection = collection; 
+        window.addDoc = addDoc; 
+        window.serverTimestamp = serverTimestamp;
 
-        window.handleLogin = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            try { await signInWithEmailAndPassword(auth, email, password); location.reload(); } catch (error) { alert("Error: " + error.message); }
-        }
-
-        window.logout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('importHouseUser'); location.reload(); } }
-
-        async function fetchOrderHistory(uid) {
-            try {
-                const q = query(collection(db, "orders"), where("userId", "==", uid));
-                const snapshot = await getDocs(q);
-                document.getElementById('profile-order-count').innerText = snapshot.size;
-            } catch (e) { console.log(e); }
-        }
-
-        // FETCH PRODUCTS (The new part)
-        async function fetchProducts() {
-            const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snapshot) => {
-                window.products = []; // Clear
-                snapshot.forEach(doc => {
-                    window.products.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // If on shop view, render immediately
-                if(!document.getElementById('shop-view').classList.contains('section-hidden')) {
-                    if(typeof window.renderProducts === 'function') window.renderProducts(currentBrand);
-                }
-                
-                // Re-render Marquee to show new products
-                if(typeof window.createMarquee === 'function') window.createMarquee();
+        // FETCH PRODUCTS DYNAMICALLY
+        const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
+        
+        // This listener is now faster because it checks phone memory first!
+        onSnapshot(q, (snapshot) => {
+            window.products = [];
+            snapshot.forEach(doc => {
+                window.products.push({ id: doc.id, ...doc.data() });
             });
-        }
+            // Initial render if on shop page
+            if(!document.getElementById('shop-view').classList.contains('section-hidden')) {
+                window.renderProducts('All');
+            }
+            if(window.createMarquee) window.createMarquee();
+        });
 
+        // Auth Listeners
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const docSnap = await getDoc(doc(db, "users", user.uid));
-                if (docSnap.exists()) {
-                    const d = docSnap.data();
-                    const userData = { name: d.firstName, surname: d.lastName };
-                    localStorage.setItem('importHouseUser', JSON.stringify(userData));
-                    document.getElementById('display-name').innerText = `${d.firstName} ${d.lastName}`;
-                    document.getElementById('user-initial').innerText = d.firstName.charAt(0).toUpperCase();
+                // Try to get user from local storage first for speed
+                const cachedUser = localStorage.getItem('importHouseUser');
+                if(cachedUser) {
+                    const u = JSON.parse(cachedUser);
+                    document.getElementById('display-name').innerText = `${u.name} ${u.surname}`;
                 }
+
+                // Background fetch to update if needed
+                getDoc(doc(db, "users", user.uid)).then(docSnap => {
+                    if (docSnap.exists()) {
+                        const d = docSnap.data();
+                        localStorage.setItem('importHouseUser', JSON.stringify({ name: d.firstName, surname: d.lastName }));
+                        document.getElementById('display-name').innerText = `${d.firstName} ${d.lastName}`;
+                    }
+                });
                 
-                fetchOrderHistory(user.uid);
-                fetchProducts(); // Start listening for products
+                // Fetch Order Count
+                const orderQ = query(collection(db, "orders"), where("userId", "==", user.uid));
+                getDocs(orderQ).then(orderSnap => {
+                    document.getElementById('profile-order-count').innerText = orderSnap.size;
+                });
 
                 document.getElementById('auth-container').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
-                document.body.classList.add('app-active');
-                if(document.getElementById('intro-overlay')) document.getElementById('intro-overlay').style.display = 'none';
-                if(typeof switchView === 'function') switchView('home');
+                document.getElementById('intro-overlay').style.display = 'none';
+                window.switchView('home');
             }
         });
+
+        // Auth Functions
+        window.handleSignup = async (e) => {
+            e.preventDefault();
+            try {
+                const c = await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, document.getElementById('reg-password').value);
+                await setDoc(doc(db, "users", c.user.uid), { firstName: document.getElementById('reg-name').value, lastName: document.getElementById('reg-surname').value });
+                location.reload();
+            } catch(e) { alert(e.message); }
+        };
+
+        window.handleLogin = async (e) => {
+            e.preventDefault();
+            try { await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value); } 
+            catch(e) { alert(e.message); }
+        };
+
+        window.logout = async () => { await signOut(auth); localStorage.removeItem('importHouseUser'); location.reload(); };
     </script>
 
     <script>
