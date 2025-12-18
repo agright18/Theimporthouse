@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#ffffff">
-    <title>The Import House | WINTER COLLECTION</title>
+    <title>The Import House | Premium Global Fashion</title>
 
     <meta property="og:site_name" content="The Import House">
-    <meta property="og:title" content="The Import House | Winter Collection">
+    <meta property="og:title" content="The Import House | Premium Global Fashion">
     <meta name="apple-mobile-web-app-title" content="Import House">
     
     <link rel="icon" type="image/webp" href="theimporthouse.webp">
@@ -123,7 +123,7 @@
             <h2 class="text-2xl font-black mb-1">Scan to Pay</h2>
             <p class="text-gray-500 text-sm mb-6">Total Amount: <span id="modal-total" class="font-bold text-black text-lg">₹0</span></p>
             <div class="bg-gray-100 p-4 rounded-2xl mb-6 mx-auto w-64 h-64 flex items-center justify-center">
-                <img src="qrcode.jpg" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=YOUR_UPI_ID&pn=ImportHouse&mc=0000&tid=123456&tr=123456&tn=Payment%20for%20Import%20House&am=0&cu=INR'" alt="Payment QR Code" class="w-full h-full object-contain mix-blend-multiply">
+                <img src="qrcode.jpg" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=YOUR_UPI_ID&pn=ImportHouse'" alt="Payment QR Code" class="w-full h-full object-contain mix-blend-multiply">
             </div>
             <p class="text-xs text-gray-400 mb-4">Accepting GPay, Paytm, PhonePe & UPI</p>
             <button onclick="processOrder('Online')" class="w-full bg-green-600 text-white font-bold py-4 rounded-full hover:bg-green-700 transition">Payment Completed</button>
@@ -249,7 +249,7 @@
         <section id="profile-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
             <button onclick="switchView('home')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Home</button>
             <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900"><img src="https://images.unsplash.com/photo-1614850523060-8da1d56e37def?auto=format&fit=crop&w=1600&q=80" class="w-full h-full object-cover opacity-80"></div>
+                <div class="h-40 md:h-48 w-full relative overflow-hidden bg-gray-900"><img src="image_7a93df.jpg" class="w-full h-full object-cover opacity-80"></div>
                 <div class="px-6 md:px-8 pb-8 relative">
                     <div class="absolute -top-10 md:-top-12 left-6 md:left-8 w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white p-1 shadow-lg"><div class="w-full h-full bg-black text-white rounded-xl flex items-center justify-center text-3xl md:text-4xl font-black"><span id="user-initial">G</span></div></div>
                     <div class="pt-12 md:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center"><div><h2 id="display-name" class="text-2xl font-black text-gray-900">Guest User</h2><p class="text-gray-500 text-sm">Joined 2025</p></div><button onclick="logout()" class="mt-4 md:mt-0 px-6 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition flex items-center gap-2 text-sm md:text-base"><i class="ph ph-sign-out"></i> Sign Out</button></div>
@@ -310,7 +310,6 @@
 
         window.logout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('importHouseUser'); location.reload(); } }
 
-        // Fetch Real Order Stats
         async function fetchOrderHistory(uid) {
             try {
                 const q = query(collection(db, "orders"), where("userId", "==", uid));
@@ -319,35 +318,22 @@
             } catch (e) { console.log(e); }
         }
 
-        // Fetch Products from Firebase
+        // FETCH PRODUCTS (The new part)
         async function fetchProducts() {
             const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
-                const grid = document.getElementById('product-grid');
-                grid.innerHTML = "";
-                window.products = []; // Update global
-                
-                if(snapshot.empty) { grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center">No products yet.</p>'; return; }
-
+                window.products = []; // Clear
                 snapshot.forEach(doc => {
-                    const p = doc.data();
-                    p.id = doc.id; // Save ID
-                    window.products.push(p);
-                    
-                    const isWishlisted = window.wishlistItems.some(i => i.id === p.id);
-                    grid.innerHTML += `
-                        <div class="group relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden cursor-pointer">
-                            <img src="${p.img}" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-black/10"></div>
-                            <div class="absolute top-4 left-4 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">${p.brand}</div>
-                            <button onclick="toggleWishlist('${p.id}', this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white flex items-center justify-center"><i class="ph ${isWishlisted ? 'ph-heart-fill text-red-500' : 'ph-heart'}"></i></button>
-                            <div class="absolute bottom-4 left-4 text-white">
-                                <h3 class="font-bold">${p.name}</h3><p>₹${p.price}</p>
-                            </div>
-                            <button onclick="addToCart('${p.id}')" class="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center text-black"><i class="ph ph-plus"></i></button>
-                        </div>
-                    `;
+                    window.products.push({ id: doc.id, ...doc.data() });
                 });
+                
+                // If on shop view, render immediately
+                if(!document.getElementById('shop-view').classList.contains('section-hidden')) {
+                    if(typeof window.renderProducts === 'function') window.renderProducts(currentBrand);
+                }
+                
+                // Re-render Marquee to show new products
+                if(typeof window.createMarquee === 'function') window.createMarquee();
             });
         }
 
@@ -363,7 +349,7 @@
                 }
                 
                 fetchOrderHistory(user.uid);
-                fetchProducts(); // Load products once logged in
+                fetchProducts(); // Start listening for products
 
                 document.getElementById('auth-container').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
@@ -378,14 +364,9 @@
         let currentUser = { name: "Guest", surname: "User" };
         window.cartItems = JSON.parse(localStorage.getItem('importHouseCart')) || [];
         window.wishlistItems = JSON.parse(localStorage.getItem('importHouseWishlist')) || [];
-        window.products = [];
+        window.products = []; // Dynamically fetched
         let currentSlide = 0; let currentBrand = 'All';
 
-        // PLACEHOLDER IF FIREBASE EMPTY (Gets overwritten by Firebase fetch)
-        const placeholderProducts = [
-            { id: 1, name: 'Tech Fleece Hoodie', brand: 'Nike', price: 4999, img: 'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95' },
-            { id: 2, name: 'Oversized Tee', brand: 'Adidas', price: 1999, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab' },
-        ];
         const brands = ['All', 'Nike', 'Adidas', 'Levis', 'Puma', 'Zara'];
 
         const cartBadge = document.getElementById('cart-badge');
@@ -394,9 +375,15 @@
         const successModal = document.getElementById('success-modal');
 
         window.addEventListener('load', () => {
-            updateCartBadge();
+            const storedCart = localStorage.getItem('importHouseCart');
+            if (storedCart) { window.cartItems = JSON.parse(storedCart); updateCartBadge(); }
             
-            // Check Local Storage
+            const storedWish = localStorage.getItem('importHouseWishlist');
+            if (storedWish) { window.wishlistItems = JSON.parse(storedWish); 
+                const wishCount = document.getElementById('profile-wishlist-count');
+                if(wishCount) wishCount.innerText = window.wishlistItems.length;
+            }
+
             const savedUser = localStorage.getItem('importHouseUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
@@ -418,7 +405,7 @@
                   .to(".login-img-anim", { scale: 1, duration: 2, ease: "power2.out" }, "-=1.5")
                   .to(".login-content-anim", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=1");
             }
-            createSnowflakes(); createMarquee(); renderFilters();
+            createSnowflakes(); renderFilters();
         });
 
         function switchView(viewName) {
@@ -439,11 +426,7 @@
                 document.getElementById('slider-controls').style.display = 'none';
             }
 
-            if (viewName === 'shop') { 
-                // If firebase hasn't loaded yet, show placeholder
-                if(window.products.length === 0) { window.products = placeholderProducts; renderProducts('All'); }
-                else { renderProducts('All'); }
-            }
+            if (viewName === 'shop') { renderProducts(currentBrand); }
             if (viewName === 'cart') { renderCart(); }
             if (viewName === 'wishlist') { renderWishlist(); }
             if (viewName === 'profile') { gsap.fromTo(".profile-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }); }
@@ -502,7 +485,6 @@
             } catch (error) { alert("Error: " + error.message); }
         }
 
-        // Logic Helpers
         function updateSlide() { sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`; }
         function nextSlide() { currentSlide = (currentSlide < 2) ? currentSlide + 1 : 0; updateSlide(); }
         function prevSlide() { currentSlide = (currentSlide > 0) ? currentSlide - 1 : 2; updateSlide(); }
@@ -515,40 +497,47 @@
             }
         }
         function createMarquee() {
-            const lp = [...placeholderProducts, ...placeholderProducts]; // Use placeholder for marquee init
-            document.getElementById('marquee-track').innerHTML = lp.map(p => `<div class="marquee-item"><img src="${p.img}" alt="${p.name}"></div>`).join('');
+            if(window.products.length === 0) return;
+            const lp = [...window.products, ...window.products]; // Loop
+            const track = document.getElementById('marquee-track');
+            if(track) track.innerHTML = lp.map(p => `<div class="marquee-item"><img src="${p.img}" alt="${p.name}"></div>`).join('');
         }
+        window.createMarquee = createMarquee; // Expose to module
+
         function renderFilters() {
             if(document.getElementById('brand-filters').innerHTML !== "") return;
             document.getElementById('brand-filters').innerHTML = brands.map(b => `<button onclick="filterBrand('${b}', this)" class="filter-btn px-6 py-2 rounded-full text-sm font-bold transition whitespace-nowrap ${b==='All'?'bg-black text-white':'bg-gray-100 text-gray-600'}">${b}</button>`).join('');
         }
         function filterBrand(b, btn) { document.querySelectorAll('.filter-btn').forEach(el=>el.className=el.className.replace('bg-black text-white','bg-gray-100 text-gray-600')); btn.className=btn.className.replace('bg-gray-100 text-gray-600','bg-black text-white'); renderProducts(b); }
         function handleSearch() { renderProducts(currentBrand); }
+        
+        // MAIN RENDER FUNCTION
         function renderProducts(brand) {
-            currentBrand = brand; const term = document.getElementById('search-input')?.value.toLowerCase() || ''; const grid = document.getElementById('product-grid'); grid.innerHTML = '';
+            currentBrand = brand; 
+            const term = document.getElementById('search-input')?.value.toLowerCase() || ''; 
+            const grid = document.getElementById('product-grid'); 
+            grid.innerHTML = '';
             
-            // Use window.products (loaded from firebase)
+            // Check if products exist yet
+            if(window.products.length === 0) { grid.innerHTML = '<p class="col-span-3 text-center py-10 text-gray-500">Loading Products...</p>'; return; }
+
             const filtered = window.products.filter(p => (brand === 'All' || p.brand === brand) && p.name.toLowerCase().includes(term));
             
-            if (filtered.length === 0) { grid.innerHTML = '<p class="col-span-3 text-center py-10">No products found.</p>'; return; }
+            if (filtered.length === 0) { grid.innerHTML = '<p class="col-span-3 text-center py-10 text-gray-500">No products found.</p>'; return; }
+            
             filtered.forEach((p, i) => {
-                // Ensure p.id exists, if not generate one (for placeholders)
-                if(!p.id) p.id = Math.random().toString(36).substr(2, 9);
-                
                 const isWishlisted = window.wishlistItems.some(x => x.id === p.id);
                 
                 const card = document.createElement('div'); card.className = "group opacity-0 translate-y-4";
-                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4 cursor-pointer"><img src="${p.img}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"><div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div><div class="absolute top-4 left-4 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">${p.brand}</div><button onclick="toggleWishlist('${p.id}', this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-md"><i class="ph ${isWishlisted ? 'ph-heart-fill text-red-500' : 'ph-heart'} text-lg"></i></button><button onclick="addToCart('${p.id}')" class="absolute bottom-4 right-4 bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg"><i class="ph ph-plus text-lg"></i></button></div><h3 class="text-lg font-bold">${p.name}</h3><p class="text-gray-500">₹${p.price.toLocaleString()}</p>`;
+                card.innerHTML = `<div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4 cursor-pointer"><img src="${p.img}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"><div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div><div class="absolute top-4 left-4 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">${p.brand}</div><button onclick="toggleWishlist('${p.id}', this)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-md"><i class="ph ${isWishlisted?'ph-heart-fill text-red-500':'ph-heart'} text-lg"></i></button><button onclick="addToCart('${p.id}')" class="absolute bottom-4 right-4 bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg"><i class="ph ph-plus text-lg"></i></button></div><h3 class="text-lg font-bold">${p.name}</h3><p class="text-gray-500">₹${p.price.toLocaleString()}</p>`;
                 grid.appendChild(card); gsap.to(card, { opacity: 1, y: 0, duration: 0.4, delay: i * 0.05 });
             });
         }
-        
-        window.toggleWishlist = (id, btn) => { 
-            // id might be string or number depending on source
-            const p = window.products.find(x=> String(x.id) === String(id)); 
-            if(!p) return;
-            
-            const i = window.wishlistItems.findIndex(x=> String(x.id) === String(id)); 
+        window.renderProducts = renderProducts; // Expose to module
+
+        function toggleWishlist(id, btn) { 
+            const p = window.products.find(x=>x.id===id); 
+            const i = window.wishlistItems.findIndex(x=>x.id===id); 
             if(i>-1) { 
                 window.wishlistItems.splice(i,1); 
                 btn.querySelector('i').className="ph ph-heart text-lg"; 
@@ -556,7 +545,7 @@
                 window.wishlistItems.push(p); 
                 btn.querySelector('i').className="ph ph-heart-fill text-red-500 text-lg"; 
             } 
-            localStorage.setItem('importHouseWishlist', JSON.stringify(window.wishlistItems));
+            localStorage.setItem('importHouseWishlist', JSON.stringify(window.wishlistItems)); 
             document.getElementById('profile-wishlist-count').innerText = window.wishlistItems.length; 
         }
         
@@ -566,8 +555,8 @@
             window.wishlistItems.forEach(p => { g.innerHTML += `<div class="group"><div class="relative aspect-[3/4] bg-gray-100 rounded-3xl overflow-hidden mb-4"><img src="${p.img}" class="w-full h-full object-cover"></div><h3 class="font-bold">${p.name}</h3><p>₹${p.price.toLocaleString()}</p></div>`; }); 
         }
         
-        window.addToCart = (id) => { 
-            const p = window.products.find(x=>String(x.id)===String(id)); 
+        function addToCart(id) { 
+            const p = window.products.find(x=>x.id===id); 
             if(p) {
                 window.cartItems.push(p); 
                 localStorage.setItem('importHouseCart', JSON.stringify(window.cartItems));
@@ -576,7 +565,7 @@
             }
         }
         
-        window.removeFromCart = (i) => { 
+        function removeFromCart(i) { 
             window.cartItems.splice(i,1); 
             localStorage.setItem('importHouseCart', JSON.stringify(window.cartItems));
             updateCartBadge(); renderCart(); 
@@ -585,13 +574,13 @@
         function updateCartBadge() { 
             cartBadge.innerText = window.cartItems.length; 
             cartBadge.classList.toggle('hidden', window.cartItems.length===0); 
-            document.getElementById('profile-order-count').innerText = "0"; // Placeholder until firebase loads real count
+            document.getElementById('profile-order-count').innerText = "0"; 
         }
         
         function renderCart() { 
             const c = document.getElementById('cart-items-container'); 
             if(window.cartItems.length===0) { c.innerHTML='<p class="text-center py-10">Empty.</p>'; document.getElementById('cart-total').innerText='₹0'; document.getElementById('checkout-total').innerText='₹0'; document.getElementById('cart-subtotal').innerText='₹0'; return; }
-            let t = 0; c.innerHTML = window.cartItems.map((p,i) => { t+=p.price; return `<div class="flex gap-4 mb-4 border-b pb-4"><img src="${p.img}" class="w-20 h-24 rounded-lg object-cover"><div class="flex-1"><h3>${p.name}</h3><p class="text-sm text-gray-500">${p.brand}</p><p class="font-bold">₹${p.price.toLocaleString()}</p><button onclick="removeFromCart(${i})" class="text-red-500 text-sm mt-2">Remove</button></div></div>`; }).join('');
+            let t = 0; c.innerHTML = window.cartItems.map((p,i) => { t+=Number(p.price); return `<div class="flex gap-4 mb-4 border-b pb-4"><img src="${p.img}" class="w-20 h-24 rounded-lg object-cover"><div class="flex-1"><h3>${p.name}</h3><p class="text-sm text-gray-500">${p.brand}</p><p class="font-bold">₹${Number(p.price).toLocaleString()}</p><button onclick="removeFromCart(${i})" class="text-red-500 text-sm mt-2">Remove</button></div></div>`; }).join('');
             document.getElementById('cart-total').innerText = '₹' + t.toLocaleString();
             document.getElementById('cart-subtotal').innerText = '₹' + t.toLocaleString();
             document.getElementById('checkout-total').innerText = '₹' + t.toLocaleString();
