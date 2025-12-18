@@ -94,10 +94,6 @@
 
         /* Size Selector Selected State */
         .size-btn.selected { background-color: black; color: white; border-color: black; }
-        
-        /* Star Rating */
-        .star-rating i { cursor: pointer; color: #d1d5db; transition: color 0.2s; }
-        .star-rating i.active { color: #facc15; }
     </style>
 </head>
 <body class="text-slate-900">
@@ -211,7 +207,9 @@
         <section id="product-detail-view" class="section-hidden min-h-screen pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto bg-white relative z-50">
             <button onclick="switchView('shop')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Shop</button>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-                <div class="bg-gray-100 rounded-3xl overflow-hidden aspect-[3/4] md:aspect-square relative"><img id="detail-img" src="" class="w-full h-full object-cover"></div>
+                <div class="bg-gray-100 rounded-3xl overflow-hidden aspect-[3/4] md:aspect-square relative">
+                    <img id="detail-img" src="" class="w-full h-full object-cover">
+                </div>
                 <div class="flex flex-col justify-center">
                     <span id="detail-brand" class="text-sm font-bold text-gray-500 uppercase mb-2"></span>
                     <h1 id="detail-name" class="text-4xl md:text-5xl font-black mb-4 leading-tight"></h1>
@@ -236,27 +234,31 @@
                 </div>
             </div>
 
-            <div class="mt-16 md:mt-24 border-t pt-10">
-                <h3 class="text-2xl font-black mb-8">Customer Reviews</h3>
-                
-                <div class="bg-gray-50 p-6 rounded-2xl mb-8 border border-gray-100">
-                    <h4 class="font-bold mb-4">Write a Review</h4>
-                    <form onsubmit="submitReview(event)" class="space-y-4">
-                        <div class="star-rating flex gap-1 mb-2">
-                            <i class="ph-fill ph-star text-2xl" onclick="setRating(1)"></i>
-                            <i class="ph-fill ph-star text-2xl" onclick="setRating(2)"></i>
-                            <i class="ph-fill ph-star text-2xl" onclick="setRating(3)"></i>
-                            <i class="ph-fill ph-star text-2xl" onclick="setRating(4)"></i>
-                            <i class="ph-fill ph-star text-2xl" onclick="setRating(5)"></i>
+            <div class="mt-16 md:mt-24">
+                <h3 class="text-2xl font-black mb-8">Reviews (3)</h3>
+                <div class="space-y-6">
+                    <div class="bg-gray-50 p-6 rounded-2xl animate-fade-in-up" style="animation-delay: 0.1s;">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="flex text-yellow-400 text-sm"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+                            <span class="font-bold text-sm">Rahul S.</span>
                         </div>
-                        <input type="hidden" id="review-rating" value="0">
-                        <input id="review-name" type="text" placeholder="Your Name" required class="w-full p-3 border rounded-lg bg-white outline-none focus:border-black">
-                        <textarea id="review-text" placeholder="Share your thoughts..." required class="w-full p-3 border rounded-lg bg-white outline-none focus:border-black h-24 resize-none"></textarea>
-                        <button type="submit" class="bg-black text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-gray-800">Post Review</button>
-                    </form>
+                        <p class="text-gray-600 text-sm">Absolutely love the quality! Fits perfectly.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl animate-fade-in-up" style="animation-delay: 0.2s;">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="flex text-yellow-400 text-sm"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+                            <span class="font-bold text-sm">Priya M.</span>
+                        </div>
+                        <p class="text-gray-600 text-sm">Fast delivery and the fabric is amazing.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl animate-fade-in-up" style="animation-delay: 0.3s;">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="flex text-yellow-400 text-sm"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph ph-star"></i></div>
+                            <span class="font-bold text-sm">Amit K.</span>
+                        </div>
+                        <p class="text-gray-600 text-sm">Great style, worth the price.</p>
+                    </div>
                 </div>
-
-                
             </div>
         </section>
 
@@ -345,7 +347,6 @@
         enableIndexedDbPersistence(db).catch((err) => { console.log(err.code); });
 
         window.auth = auth; window.db = db; window.collection = collection; window.addDoc = addDoc; window.serverTimestamp = serverTimestamp;
-        window.query = query; window.where = where; window.onSnapshot = onSnapshot; window.orderBy = orderBy; // Expose
 
         window.handleSignup = async (e) => {
             e.preventDefault();
@@ -398,7 +399,8 @@
                 const docSnap = await getDoc(doc(db, "users", user.uid));
                 if (docSnap.exists()) {
                     const d = docSnap.data();
-                    localStorage.setItem('importHouseUser', JSON.stringify({ name: d.firstName, surname: d.lastName }));
+                    const userData = { name: d.firstName, surname: d.lastName };
+                    localStorage.setItem('importHouseUser', JSON.stringify(userData));
                     document.getElementById('display-name').innerText = `${d.firstName} ${d.lastName}`;
                     document.getElementById('user-initial').innerText = d.firstName.charAt(0).toUpperCase();
                 }
@@ -418,7 +420,6 @@
         let cartItems = []; let wishlistItems = []; let currentSlide = 0; let currentBrand = 'All';
         let currentDetailProduct = null;
         let selectedSize = null;
-        let reviewListenerUnsubscribe = null;
 
         const brands = ['All', 'Nike', 'Adidas', 'Levis', 'Puma', 'Zara'];
         const cartBadge = document.getElementById('cart-badge');
@@ -481,69 +482,6 @@
             if (viewName === 'profile') { gsap.fromTo(".profile-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }); }
         }
 
-        // --- REVIEW SYSTEM ---
-        window.setRating = (rating) => {
-            document.getElementById('review-rating').value = rating;
-            const stars = document.querySelectorAll('.star-rating i');
-            stars.forEach((star, index) => {
-                if(index < rating) star.className = "ph-fill ph-star text-2xl active";
-                else star.className = "ph ph-star text-2xl";
-            });
-        };
-
-        window.submitReview = async (e) => {
-            e.preventDefault();
-            if(!currentDetailProduct) return;
-            const rating = document.getElementById('review-rating').value;
-            if(rating == 0) { alert("Please give a star rating."); return; }
-            
-            const reviewData = {
-                productId: currentDetailProduct.id,
-                userName: document.getElementById('review-name').value,
-                comment: document.getElementById('review-text').value,
-                rating: parseInt(rating),
-                timestamp: window.serverTimestamp()
-            };
-
-            try {
-                await window.addDoc(window.collection(window.db, "reviews"), reviewData);
-                alert("Review Submitted!");
-                e.target.reset();
-                setRating(0); // Reset stars
-            } catch(err) { alert(err.message); }
-        };
-
-        function fetchReviews(productId) {
-            const list = document.getElementById('reviews-list');
-            list.innerHTML = '<p class="text-gray-500 italic">Loading reviews...</p>';
-            
-            if(reviewListenerUnsubscribe) reviewListenerUnsubscribe(); // Stop old listener
-
-            const q = window.query(window.collection(window.db, "reviews"), window.where("productId", "==", productId), window.orderBy("timestamp", "desc"));
-            
-            reviewListenerUnsubscribe = window.onSnapshot(q, (snapshot) => {
-                list.innerHTML = "";
-                if(snapshot.empty) { list.innerHTML = '<p class="text-gray-400 text-sm">No reviews yet. Be the first!</p>'; return; }
-                
-                snapshot.forEach(doc => {
-                    const r = doc.data();
-                    let starsHtml = "";
-                    for(let i=0; i<5; i++) {
-                        starsHtml += i < r.rating ? '<i class="ph-fill ph-star text-yellow-400"></i>' : '<i class="ph ph-star text-gray-300"></i>';
-                    }
-                    
-                    list.innerHTML += `
-                        <div class="bg-gray-50 p-6 rounded-2xl animate-fade-in-up">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="font-bold text-sm">${r.userName}</span>
-                                <div class="flex text-sm">${starsHtml}</div>
-                            </div>
-                            <p class="text-gray-600 text-sm leading-relaxed">${r.comment}</p>
-                        </div>`;
-                });
-            });
-        }
-
         // --- PRODUCT DETAILS LOGIC ---
         window.openProduct = (id) => {
             const p = window.products.find(x => x.id === id);
@@ -551,18 +489,18 @@
             currentDetailProduct = p;
             selectedSize = null;
             
+            // Populate Data
             document.getElementById('detail-img').src = p.img;
             document.getElementById('detail-brand').innerText = p.brand;
             document.getElementById('detail-name').innerText = p.name;
             document.getElementById('detail-price').innerText = `₹${Number(p.price).toLocaleString()}`;
             
+            // Reset Sizes
             document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('selected'));
             
+            // Update Wishlist Button Icon
             const isWish = wishlistItems.some(x => x.id === p.id);
             document.getElementById('wishlist-btn').innerHTML = `<i class="ph ${isWish ? 'ph-heart-fill text-red-500' : 'ph-heart'} text-2xl"></i>`;
-
-            // Load Reviews
-            fetchReviews(p.id);
 
             switchView('product-detail');
         };
@@ -576,6 +514,7 @@
         window.addToCartFromDetail = () => {
             if(!selectedSize) { alert("Please select a size first."); return; }
             if(currentDetailProduct) {
+                // Add size to product name for cart
                 const cartProduct = { ...currentDetailProduct, name: `${currentDetailProduct.name} (${selectedSize})` };
                 cartItems.push(cartProduct);
                 localStorage.setItem('importHouseCart', JSON.stringify(cartItems));
