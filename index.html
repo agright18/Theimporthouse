@@ -99,6 +99,19 @@
         /* Star Rating */
         .star-rating i { cursor: pointer; color: #d1d5db; transition: color 0.2s; }
         .star-rating i.active { color: #facc15; }
+
+        /* --- ORDER TRACKER STYLES --- */
+        .track-step { position: relative; padding-left: 40px; padding-bottom: 30px; }
+        .track-step:last-child { padding-bottom: 0; }
+        .track-dot { width: 16px; height: 16px; border-radius: 50%; background: #e5e7eb; position: absolute; left: 0; top: 5px; z-index: 10; transition: all 0.5s ease; border: 2px solid #fff; box-shadow: 0 0 0 2px #e5e7eb; }
+        .track-line { position: absolute; left: 7px; top: 25px; bottom: -5px; width: 2px; background: #e5e7eb; z-index: 0; }
+        .track-step:last-child .track-line { display: none; }
+        
+        .track-step.active .track-dot { background: #22c55e; box-shadow: 0 0 0 2px #22c55e; }
+        .track-step.active .track-text { color: #000; font-weight: 700; }
+        
+        /* Animated Path */
+        .track-progress { position: absolute; left: 7px; top: 25px; width: 2px; background: #22c55e; height: 0; transition: height 1s ease; z-index: 5; }
     </style>
 </head>
 <body class="text-slate-900">
@@ -140,6 +153,50 @@
             <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
             <p class="text-gray-500 text-sm mb-6">We have received your order.</p>
             <button onclick="resetApp()" class="w-full bg-black text-white font-bold py-3 rounded-full">Continue Shopping</button>
+        </div>
+    </div>
+
+    <div id="tracking-modal" class="fixed inset-0 z-[350] bg-black/90 hidden items-end md:items-center justify-center">
+        <div class="bg-white w-full md:max-w-md md:rounded-3xl rounded-t-3xl p-6 relative animate-fade-in-up h-[85vh] md:h-auto overflow-y-auto">
+            <button onclick="closeModal('tracking-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-black"><i class="ph ph-x text-2xl"></i></button>
+            
+            <div class="mb-6">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wide">Order ID</span>
+                <h2 id="track-order-id" class="text-xl font-black">#12345</h2>
+            </div>
+
+            <div class="relative pl-2 mb-8">
+                <div class="absolute left-[9px] top-[15px] bottom-[30px] w-[2px] bg-gray-200"></div>
+                <div id="track-anim-line" class="absolute left-[9px] top-[15px] w-[2px] bg-green-500 transition-all duration-1000 ease-out h-0"></div>
+
+                <div class="track-step" id="step-confirmed">
+                    <div class="track-dot"></div>
+                    <div class="track-text text-gray-400 text-sm transition-colors">Order Confirmed</div>
+                    <div class="text-xs text-gray-400 mt-1" id="date-confirmed"></div>
+                </div>
+
+                <div class="track-step" id="step-shipped">
+                    <div class="track-dot"></div>
+                    <div class="track-text text-gray-400 text-sm transition-colors">Shipped</div>
+                    <div class="text-xs text-gray-400 mt-1">In Transit</div>
+                </div>
+
+                <div class="track-step" id="step-delivered">
+                    <div class="track-dot"></div>
+                    <div class="track-text text-gray-400 text-sm transition-colors">Delivered</div>
+                    <div class="text-xs text-gray-400 mt-1">Package Arrived</div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                <h3 class="font-bold text-sm mb-3">Items in Order</h3>
+                <div id="track-items-list" class="space-y-3">
+                    </div>
+                <div class="border-t border-gray-200 mt-3 pt-3 flex justify-between font-bold">
+                    <span>Total Paid</span>
+                    <span id="track-total">₹0</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -304,6 +361,23 @@
             </form>
         </section>
 
+        <section id="orders-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-3xl mx-auto pb-20 bg-white relative z-40">
+            <button onclick="switchView('profile')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Profile</button>
+            <h2 class="text-3xl font-black mb-8">My Orders</h2>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-bold mb-4 text-gray-400 uppercase tracking-wide">Current Orders</h3>
+                <div id="current-orders-list" class="space-y-4">
+                    </div>
+            </div>
+
+            <div class="mb-8 pt-8 border-t border-gray-100">
+                <h3 class="text-lg font-bold mb-4 text-gray-400 uppercase tracking-wide">Order History</h3>
+                <div id="past-orders-list" class="space-y-4">
+                    </div>
+            </div>
+        </section>
+
         <section id="profile-view" class="section-hidden min-h-screen pt-24 md:pt-28 px-4 md:px-6 max-w-5xl mx-auto pb-20 bg-white relative z-40">
             <button onclick="switchView('home')" class="mb-6 flex items-center gap-2 text-gray-500 hover:text-black font-bold transition"><i class="ph ph-arrow-left text-lg"></i> Back to Home</button>
             <div class="profile-anim bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
@@ -311,7 +385,10 @@
                 <div class="px-6 md:px-8 pb-8 relative">
                     <div class="absolute -top-10 md:-top-12 left-6 md:left-8 w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white p-1 shadow-lg"><div class="w-full h-full bg-black text-white rounded-xl flex items-center justify-center text-3xl md:text-4xl font-black"><span id="user-initial">G</span></div></div>
                     <div class="pt-12 md:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center"><div><h2 id="display-name" class="text-2xl font-black text-gray-900">Guest User</h2><p class="text-gray-500 text-sm">Joined 2025</p></div><button onclick="logout()" class="mt-4 md:mt-0 px-6 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition flex items-center gap-2 text-sm md:text-base"><i class="ph ph-sign-out"></i> Sign Out</button></div>
-                    <div class="grid grid-cols-2 gap-4 my-8"><div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center"><div class="text-2xl font-black mb-1" id="profile-order-count">0</div><div class="text-xs text-gray-500 uppercase font-bold">Orders</div></div><div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center"><div class="text-2xl font-black mb-1" id="profile-wishlist-count">0</div><div class="text-xs text-gray-500 uppercase font-bold">Wishlist</div></div></div>
+                    <div class="grid grid-cols-2 gap-4 my-8">
+                        <div onclick="switchView('orders')" class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center cursor-pointer hover:bg-gray-100 transition"><div class="text-2xl font-black mb-1" id="profile-order-count">0</div><div class="text-xs text-gray-500 uppercase font-bold">Orders</div></div>
+                        <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center"><div class="text-2xl font-black mb-1" id="profile-wishlist-count">0</div><div class="text-xs text-gray-500 uppercase font-bold">Wishlist</div></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -333,22 +410,21 @@
         // --- ⚠️ PASTE YOUR REAL KEYS HERE ⚠️ ---
         const firebaseConfig = {
             apiKey: "AIzaSyAVAhzIDoiFiGxHN0z2ze9TSocB3Cbb6i8",
-  authDomain: "shop-clothes-aded9.firebaseapp.com",
-  projectId: "shop-clothes-aded9",
-  storageBucket: "shop-clothes-aded9.firebasestorage.app",
-  messagingSenderId: "119802803208",
-  appId: "1:119802803208:web:984c947412580274268dbd",
+            authDomain: "shop-clothes-aded9.firebaseapp.com",
+            projectId: "shop-clothes-aded9",
+            storageBucket: "shop-clothes-aded9.firebasestorage.app",
+            messagingSenderId: "119802803208",
+            appId: "1:119802803208:web:984c947412580274268dbd",
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // PERSISTENCE
         enableIndexedDbPersistence(db).catch((err) => { console.log(err.code); });
 
         window.auth = auth; window.db = db; window.collection = collection; window.addDoc = addDoc; window.serverTimestamp = serverTimestamp;
-        window.query = query; window.where = where; window.onSnapshot = onSnapshot; window.orderBy = orderBy; // Expose
+        window.query = query; window.where = where; window.onSnapshot = onSnapshot; window.orderBy = orderBy;
 
         window.handleSignup = async (e) => {
             e.preventDefault();
@@ -373,15 +449,32 @@
 
         window.logout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('importHouseUser'); location.reload(); } }
 
+        // --- UPDATED FETCH ORDERS FOR DISPLAY ---
+        window.allUserOrders = [];
         async function fetchOrderHistory(uid) {
             try {
-                const q = query(collection(db, "orders"), where("userId", "==", uid));
+                const q = query(collection(db, "orders"), where("userId", "==", uid), orderBy("timestamp", "desc"));
                 const snapshot = await getDocs(q);
                 document.getElementById('profile-order-count').innerText = snapshot.size;
-            } catch (e) { console.log(e); }
+                
+                window.allUserOrders = [];
+                snapshot.forEach(doc => {
+                    window.allUserOrders.push({ id: doc.id, ...doc.data() });
+                });
+                renderOrdersView();
+            } catch (e) { 
+                console.log("Indexing issue or empty", e);
+                // Fallback for indexing issues (client-side sort if query fails)
+                const q2 = query(collection(db, "orders"), where("userId", "==", uid));
+                const snap2 = await getDocs(q2);
+                document.getElementById('profile-order-count').innerText = snap2.size;
+                window.allUserOrders = [];
+                snap2.forEach(doc => window.allUserOrders.push({id: doc.id, ...doc.data()}));
+                window.allUserOrders.sort((a,b) => b.timestamp - a.timestamp);
+                renderOrdersView();
+            }
         }
 
-        // FETCH PRODUCTS
         async function fetchProducts() {
             const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
@@ -460,7 +553,6 @@
             createSnowflakes(); renderFilters();
         });
 
-        // --- ADDED FUNCTION FOR SIGNUP TOGGLE ---
         window.toggleAuth = (mode) => {
             const loginForm = document.getElementById('login-form');
             const signupForm = document.getElementById('signup-form');
@@ -476,7 +568,7 @@
 
         function switchView(viewName) {
             window.scrollTo({ top: 0, behavior: 'auto' });
-            ['home-view', 'shop-view', 'profile-view', 'cart-view', 'wishlist-view', 'checkout-view', 'product-detail-view'].forEach(id => {
+            ['home-view', 'shop-view', 'profile-view', 'cart-view', 'wishlist-view', 'checkout-view', 'product-detail-view', 'orders-view'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) { el.classList.add('section-hidden'); el.classList.remove('section-active'); }
             });
@@ -496,9 +588,107 @@
             if (viewName === 'cart') { renderCart(); }
             if (viewName === 'wishlist') { renderWishlist(); }
             if (viewName === 'profile') { gsap.fromTo(".profile-anim", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }); }
+            if (viewName === 'orders') { renderOrdersView(); }
         }
 
-        // --- REVIEW SYSTEM ---
+        // --- NEW: RENDER ORDERS VIEW ---
+        function renderOrdersView() {
+            const currentList = document.getElementById('current-orders-list');
+            const pastList = document.getElementById('past-orders-list');
+            if(!currentList || !window.allUserOrders) return;
+
+            currentList.innerHTML = "";
+            pastList.innerHTML = "";
+
+            if(window.allUserOrders.length === 0) {
+                currentList.innerHTML = `<p class="text-gray-400 text-sm">No active orders.</p>`;
+                return;
+            }
+
+            window.allUserOrders.forEach(order => {
+                const status = order.status || "Pending";
+                const isPast = status === "Delivered" || status === "Cancelled";
+                
+                // Card HTML
+                const card = document.createElement('div');
+                card.className = "flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer hover:bg-gray-100 transition";
+                card.onclick = () => openTrackModal(order);
+                
+                // Get first item image
+                const firstImg = order.items && order.items[0] ? order.items[0].img : 'theimporthouse.webp';
+                
+                card.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <img src="${firstImg}" class="w-12 h-12 rounded-lg object-cover bg-white">
+                        <div>
+                            <p class="font-bold text-sm">Order #${order.id.slice(-5).toUpperCase()}</p>
+                            <p class="text-xs text-gray-500">${status} • ${order.items.length} Items</p>
+                        </div>
+                    </div>
+                    <i class="ph ph-caret-right text-gray-400"></i>
+                `;
+
+                if(isPast) pastList.appendChild(card);
+                else currentList.appendChild(card);
+            });
+
+            if(currentList.innerHTML === "") currentList.innerHTML = `<p class="text-gray-400 text-sm">No active orders.</p>`;
+            if(pastList.innerHTML === "") pastList.innerHTML = `<p class="text-gray-400 text-sm">No past orders.</p>`;
+        }
+
+        // --- NEW: OPEN TRACKING MODAL & ANIMATE ---
+        window.openTrackModal = (order) => {
+            const modal = document.getElementById('tracking-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            
+            // Set basic info
+            document.getElementById('track-order-id').innerText = "#" + order.id.slice(-5).toUpperCase();
+            document.getElementById('track-total').innerText = "₹" + order.totalAmount.toLocaleString();
+            
+            // Set Items
+            const itemsList = document.getElementById('track-items-list');
+            itemsList.innerHTML = order.items.map(i => `
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-600 truncate w-2/3">${i.name}</span>
+                    <span class="font-bold">₹${i.price}</span>
+                </div>
+            `).join('');
+
+            // ANIMATION LOGIC
+            const status = order.status || "Pending";
+            const steps = {
+                confirmed: document.getElementById('step-confirmed'),
+                shipped: document.getElementById('step-shipped'),
+                delivered: document.getElementById('step-delivered')
+            };
+            const line = document.getElementById('track-anim-line');
+            
+            // Reset state
+            Object.values(steps).forEach(s => s.classList.remove('active'));
+            line.style.height = '0%';
+
+            // Set Dates (Mock logic)
+            const dateStr = order.timestamp ? new Date(order.timestamp.seconds*1000).toLocaleDateString() : 'N/A';
+            document.getElementById('date-confirmed').innerText = dateStr;
+
+            // Trigger Animation after brief delay for modal open
+            setTimeout(() => {
+                if(status === "Pending" || status === "Confirmed") {
+                    steps.confirmed.classList.add('active');
+                    line.style.height = '10%'; // Just past the dot
+                } else if (status === "Shipped") {
+                    steps.confirmed.classList.add('active');
+                    steps.shipped.classList.add('active');
+                    line.style.height = '50%'; 
+                } else if (status === "Delivered") {
+                    steps.confirmed.classList.add('active');
+                    steps.shipped.classList.add('active');
+                    steps.delivered.classList.add('active');
+                    line.style.height = '100%';
+                }
+            }, 300);
+        };
+
         window.setRating = (rating) => {
             document.getElementById('review-rating').value = rating;
             const stars = document.querySelectorAll('.star-rating i');
@@ -561,7 +751,6 @@
             });
         }
 
-        // --- PRODUCT DETAILS LOGIC ---
         window.openProduct = (id) => {
             const p = window.products.find(x => x.id === id);
             if(!p) return;
@@ -578,7 +767,6 @@
             const isWish = wishlistItems.some(x => x.id === p.id);
             document.getElementById('wishlist-btn').innerHTML = `<i class="ph ${isWish ? 'ph-heart-fill text-red-500' : 'ph-heart'} text-2xl"></i>`;
 
-            // Load Reviews
             fetchReviews(p.id);
 
             switchView('product-detail');
@@ -608,7 +796,6 @@
             document.getElementById('wishlist-btn').innerHTML = `<i class="ph ${isWish ? 'ph-heart-fill text-red-500' : 'ph-heart'} text-2xl"></i>`;
         };
 
-        // --- RENDER LOGIC ---
         window.renderProducts = (brand) => {
             currentBrand = brand; 
             const term = document.getElementById('search-input')?.value.toLowerCase() || ''; 
@@ -653,7 +840,6 @@
             const modalTotal = document.getElementById('modal-total'); if(modalTotal) modalTotal.innerText = '₹' + t.toLocaleString();
         }
 
-        // --- SAFE FUNCTIONS ---
         function closeModal(id) { const el = document.getElementById(id); if(el) { el.classList.add('hidden'); el.classList.remove('flex'); } }
         function resetApp() { closeModal('success-modal'); switchView('home'); }
         function handleCheckout(e) { e.preventDefault(); if(cartItems.length === 0) { alert("Cart is empty!"); return; } const method = document.querySelector('input[name="payment"]:checked').value; if(method === 'COD') { processOrder('COD'); } else { openPaymentModal(); } }
